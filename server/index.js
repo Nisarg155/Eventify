@@ -12,7 +12,9 @@ mongoose.connect(process.env.DATABASE_URL).then(
     .catch(err => console.log(err))
 
 app.get("/", (req, res) => {
-    res.render("hello this is my node app");
+    res.json({
+        message: "Welcome to the DB!",
+    });
 })
 
 
