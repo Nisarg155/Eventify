@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const UserDetails = require('./modals/UserDetails');
 const Event = require('./modals/Event');
-const Manager = require('./modals/Manager');
+const Manager = require('./modals/Organization');
 
 const PORT = process.env.PORT || 5000;
 dotenv.config();

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Organization = require('./Organization')
 
 const EventSchema = new mongoose.Schema({
     name: {
@@ -11,6 +11,10 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    organization:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Organization'
     },
     poster: {
         url: {
