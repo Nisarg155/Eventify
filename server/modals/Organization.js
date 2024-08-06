@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Event = require('Event');
-const ManagerSchema = new mongoose.Schema({
+const OrganizationSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -33,4 +33,4 @@ const ManagerSchema = new mongoose.Schema({
     ]
 });
 
-module.exports = mongoose.model('Manager', ManagerSchema);
+module.exports = mongoose.model('Organization', OrganizationSchema);
