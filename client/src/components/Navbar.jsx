@@ -17,6 +17,7 @@ export default function Nav_Bar() {
 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user)
+    console.log(user)
 
     const handleSignOut = async () => {
         await signOut(auth).then(() => {
