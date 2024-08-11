@@ -2,11 +2,9 @@ const express = require("express");
 const dotenv = require('dotenv')
 const mongoose = require('mongoose');
 const cors = require('cors');
-// const UserDetails = require('./modals/UserDetails');
-// const Event = require('./modals/Event');
-// const Manager = require('./modals/Organization');
 const morgan = require('morgan');
 const {protect} = require("./auth/auth");
+const loginRouter = require('./router/login');
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -34,6 +32,8 @@ app.get("/", (req, res) => {
     });
 })
 
+// for login router
+app.use("/api/login",loginRouter);
 //protected router
 app.use("/api",protect);
 

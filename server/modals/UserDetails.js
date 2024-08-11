@@ -11,10 +11,18 @@ const UserDetailSchema = new mongoose.Schema(
             type: String,
             required:true,
         },
-        branch:String,
-        collageId:String,
-        registeredEvent:[],
-        attendedEvent:[],
+        branch:{
+            type: String,
+        },
+        collageid:{
+            type: String,
+        },
+        registeredEvent:{
+            type:Array,
+        },
+        attendedEvent:{
+            type:Array,
+        },
     }
 )
 
