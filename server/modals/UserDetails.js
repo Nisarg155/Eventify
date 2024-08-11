@@ -17,12 +17,14 @@ const UserDetailSchema = new mongoose.Schema(
         collageid:{
             type: String,
         },
-        registeredEvent:{
-            type:Array,
-        },
-        attendedEvent:{
-            type:Array,
-        },
+        registeredEvent:[{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Event',
+        }],
+        attendedEvent:[{
+            type:mongoose.Schema.Types.ObjectId,
+            ref: 'Event'
+        }],
     }
 )
 
