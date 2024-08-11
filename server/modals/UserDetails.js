@@ -11,7 +11,6 @@ const UserDetailSchema = new mongoose.Schema(
             type: String,
             required:true,
         },
-        phone:String,
         branch:String,
         collageId:String,
         registeredEvent:[],
