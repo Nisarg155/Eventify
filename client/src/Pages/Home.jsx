@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 // import { qrcodeGenerator } from "react-easy-qrcode-generator";
 import CSILogo from '../assets/logo.png';
 import GradualSpacing from "../components/magicui/gradual-spacing.jsx";
-import SlightFlip from "../components/magicui/flip-text.jsx";
 
 export default function Home() {
     const user = useSelector((state) => state.user);
