@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {getAuth, signInWithPopup, GoogleAuthProvider, signOut, getAdditionalUserInfo} from "firebase/auth";
 import app from "../firebaseconfig.jsx";
 import {useDispatch} from "react-redux";
-import {AddUser, RemoveUser} from "../redux/reducers/UserSlice.jsx";
+import {AddUser, RemoveUser, UpdateUser} from "../redux/reducers/UserSlice.jsx";
 import CSILOGO from '../assets/logo.png'
 import UserLogo from '../assets/user.png'
 import {useSelector} from "react-redux";
@@ -20,17 +20,121 @@ export default function Nav_Bar() {
     const user = useSelector((state) => state.user)
     const [openModal, setOpenModal] = useState(false)
 
-    const get_user = async (email) => {
-        const res = await fetch(`http://localhost:5000/api/login/signin`, {
-            method: "GET",
-            body: JSON.stringify({
-                email: email,
+
+    const get_user = async (email,photo) => {
+        try{
+            const res = await fetch(`http://localhost:5000/api/login/signin/${email}`, {
+                method: "GET",
             })
-        }).then((res) => {
-            console.log(res)
-        })
+
+            if(res.status === 200){
+                await res.json().then((data) => {
+                    const tempuser = {
+                        name: data.name,
+                        email: data.email,
+                        branch: data.branch,
+                        collageid: data.collageid,
+                        photo:photo,
+                        token: data.token,
+                        access_level: data.access_level,
+                    }
+                    dispatch(UpdateUser(tempuser));
+                })
+            }
+            else {
+                toast.error('Unable to login',{
+                    position: "top-right",
+                    draggable: true,
+                    autoClose: 3000
+                })
+                handleSignOut()
+            }
+        }catch ( e)
+        {
+            toast.error('Unable to login',{
+                position: "top-right",
+                draggable: true,
+                autoClose: 3000
+            })
+            handleSignOut()
+        }
+
 
     }
+
+    const org_find = async (email, photo) => {
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/login/check/organization/${email}`, {
+                method: "GET",
+            })
+
+            if (res.status === 200) {
+                await res.json().then((value) => {
+                    const tempuser = {
+                        name: value.name,
+                        email: value.email,
+                        photo: photo,
+                        token: value.token,
+                        access_level: value.access_level,
+                    }
+                    dispatch(UpdateUser(tempuser))
+                })
+                return true
+            } else if (res.status === 204) {
+                return false
+            } else {
+                throw Error('Error While Login')
+            }
+
+        } catch (e) {
+            toast.error(e.message);
+            handleSignOut();
+        }
+    }
+
+    // function to make a request to create a new user
+    const set_user = async (data) => {
+        const res = await fetch(`http://localhost:5000/api/login/signup`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: data.email,
+                name: data.name,
+                branch: data.branch,
+                collageid: data.collageid,
+            })
+        })
+        if (!res.ok) {
+            toast.error(res.statusText);
+            handleSignOut();
+            return;
+        }
+        res.json().then(
+            (data) => {
+                setOpenModal(false)
+                toast.success(`Welcome , ${data.name}`, {
+                    position: "top-right",
+                    draggable: true,
+                    autoClose: 3000
+                })
+                const tempuser = {
+                    email: data.email,
+                    name: data.name,
+                    collageid: data.collageid,
+                    branch: data.branch,
+                    token: data.token,
+                    photo: user.photo,
+                    access_level: data.access_level,
+                }
+                dispatch(UpdateUser(tempuser));
+            }
+        )
+    }
+
     const handleSignOut = async () => {
         await signOut(auth).then(() => {
             dispatch(RemoveUser(null))
@@ -38,33 +142,41 @@ export default function Nav_Bar() {
     }
     const handleGoogleSignIn = async () => {
         await signInWithPopup(auth, provider)
-            .then((result) => {
+            .then(async (result) => {
                 const user = {
                     name: result.user.displayName,
-                    number: result.user.phoneNumber,
                     photo: result.user.photoURL,
                     email: result.user.email
                 }
-
+                await dispatch(AddUser(user))
                 const additionalUserInfo = getAdditionalUserInfo(result);
                 const isNewUser = additionalUserInfo.isNewUser;
-                if (isNewUser) {
-                    setOpenModal(true)
-                } else {
-                    get_user(result.user.email)
-                }
+                const value = await org_find(result.user.email, result.user.photoURL)
+                if (!value) {
+                    if (isNewUser) {
+                        setOpenModal(true)
+                    } else {
 
-
-                dispatch(AddUser(user))
-                toast.success(
-                    `Welcome Back , ${result.user.displayName}`
-                    ,
-                    {
-                        position: "top-right",
-                        draggable: true,
-                        autoClose: 3000
+                        get_user(result.user.email,result.user.photoURL).then(() => {
+                            toast.success(
+                                `Welcome Back , ${user.name}`,
+                                {
+                                    position: "top-right",
+                                    draggable: true,
+                                    autoClose: 3000
+                                }
+                            )
+                        })
                     }
-                )
+                }else{
+                    toast.success(
+                        `Welcome Back , ${user.name}`,
+                        {
+                            position: "top-right",
+                            draggable: true,
+                            autoClose: 3000
+                        }                    )
+                }
                 const timeout = setTimeout(() => {
                     handleSignOut();
                 }, 300000);
@@ -86,26 +198,34 @@ export default function Nav_Bar() {
         <div>
             {/*UserDetails Modal*/}
             {
-                <Modal show={openModal} size="md" popup>
-                    <Modal.Header/>
-                    <Modal.Body>
-                        <form onSubmit={(event) => {
-                            event.preventDefault()
-                            const data = new FormData(event.target)
-                            if (data.get('branch') === 'none') {
-                                toast.error("Please Select Branch", {
-                                    autoClose: 3000
-                                });
-                                return;
-                            }
-                        }}>
-                            <UserDetailsPopup
-                                name={'nisarg'}
-                            />
-                        </form>
+                user ?
+                    <Modal show={openModal} size="md" popup>
+                        <Modal.Header/>
+                        <Modal.Body>
+                            <form onSubmit={(event) => {
+                                event.preventDefault()
+                                const formData = new FormData(event.target)
+                                const data = {
+                                    email: user.email,
+                                    name: formData.get('name'),
+                                    branch: formData.get('branch'),
+                                    collageid: formData.get('collageid'),
+                                }
+                                if (formData.get('branch') === 'none') {
+                                    toast.error("Please Select Branch", {
+                                        autoClose: 3000
+                                    });
+                                    return;
+                                }
+                                set_user(data)
+                            }}>
+                                <UserDetailsPopup
+                                    name={user.name}
+                                />
+                            </form>
 
-                    </Modal.Body>
-                </Modal>
+                        </Modal.Body>
+                    </Modal> : null
             }
 
 

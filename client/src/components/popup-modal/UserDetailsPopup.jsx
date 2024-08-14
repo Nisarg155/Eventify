@@ -1,9 +1,12 @@
 "use client";
 import {Button, Label, TextInput} from "flowbite-react";
+import {useState} from "react";
 
-export function UserDetailsPopup({name})  {
-
-
+export function UserDetailsPopup({name}) {
+    const [Name, setName] = useState(name)
+    const handleChange = (event) => {
+        setName(event.target.value);
+    };
     return (
 
         <div className="space-y-6">
@@ -12,14 +15,14 @@ export function UserDetailsPopup({name})  {
                 <div className="mb-2 block rounded ">
                     <Label htmlFor="name" value="Your Name"/>
                 </div>
-                <TextInput id="name" name={'name'} value={name} required/>
+                <TextInput id="name" name={'name'} value={Name} onChange={handleChange} required/>
             </div>
 
             <div>
                 <div className="mb-2 block rounded ">
-                    <Label htmlFor="collage_id" value="Your Collage Id"/>
+                    <Label htmlFor="collageid" value="Your Collage Id"/>
                 </div>
-                <TextInput id="collage_id" placeholder={'i.e 22ceueg082'} name={'collage_id'}  required/>
+                <TextInput id="collageid" placeholder={'i.e 22ceueg082'} name={'collageid'} required/>
             </div>
 
             <label htmlFor={"branch"}/>

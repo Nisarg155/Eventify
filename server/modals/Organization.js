@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Event = require('Event');
+const Event = require('./Event' );
 const OrganizationSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -32,5 +32,6 @@ const OrganizationSchema = new mongoose.Schema({
         }
     ]
 });
-
-module.exports = mongoose.model('Organization', OrganizationSchema);
+OrganizationSchema.index({email:1} , {unique:true})
+const Organization = mongoose.model('Organization', OrganizationSchema);
+module.exports = Organization

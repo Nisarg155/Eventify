@@ -1,5 +1,5 @@
-import  { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import {useState, useEffect} from "react";
+import {useSelector} from "react-redux";
 // import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import { qrcodeGenerator } from "react-easy-qrcode-generator";
@@ -8,18 +8,19 @@ import GradualSpacing from "../components/magicui/gradual-spacing.jsx";
 
 export default function Home() {
     const user = useSelector((state) => state.user);
+    const org = useSelector((state) => state.organization);
     const [qrGenerated, setQrGenerated] = useState(false);
 
 
-     useEffect(() => {
-         if (!qrGenerated) {
-             setQrGenerated(true)
-         }
+    useEffect(() => {
+        if (!qrGenerated) {
+            setQrGenerated(true)
+        }
     }, []);
 
     return (
         <div className="text-center pb-12 md:pb-16 flex flex-col justify-center items-center min-h-screen">
-            {user ? (
+            {(user || org) ? (
                 <>
 
 
@@ -44,7 +45,8 @@ export default function Home() {
                         data-aos="zoom-y-out"><span
                         className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-400"> Welcomes You</span>
                     </h1>
-                    <h3 className="text-5xl md:text-8xl font-extrabold leading-tighter tracking-tighter mb-4">Please Sign in
+                    <h3 className="text-5xl md:text-8xl font-extrabold leading-tighter tracking-tighter mb-4">Please
+                        Sign in
                         to Continue</h3>
 
 

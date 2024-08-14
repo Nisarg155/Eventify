@@ -1,3 +1,3 @@
 const router = require("express").Router();
 
-router.patch('update')
+router.patch('/update')
