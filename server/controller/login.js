@@ -2,6 +2,8 @@ const UserDetails = require('../modals/UserDetails');
 const Organization = require('../modals/Organization');
 const {createJWT} = require('../auth/auth');
 const jwt = require("jsonwebtoken");
+const {sendEmail} = require('../mail_service/mailgun')
+const {registratationTemplate}  = require('../mail_service/templates/registratation')
 
 const check_organization = async (req, res) => {
 
@@ -58,6 +60,9 @@ const signup = async (req, res) => {
                 token: token,
                 access_level: "Guest",
             });
+            const html = registratationTemplate(req.body.name)
+            const subject = "Welcome to CSI DDU!"
+            sendEmail(req.body.email,subject,html);
         }
     })
 
@@ -75,22 +80,12 @@ const signin = async (req, res) => {
                     branch: user.branch,
                     collageid: user.collageid,
                     token: token,
-                    access_level:"Guest"
+                    access_level: "Guest"
                 })
             })
         } else {
             res.sendStatus(204)
         }
     })
-    // const user = await UserDetails.findOne({email: req.params.email}, {name: 1, branch: 1, collageid: 1});
-    // const token = createJWT({email: req.params.email})
-    // res.json({
-    //     email: req.param.email,
-    //     name: user.name,
-    //     branch: user.branch,
-    //     collageid: user.collageid,
-    //     token: token,
-    //     access_level:"Guest",
-    // })
 }
 module.exports = {signup, signin, check_organization};

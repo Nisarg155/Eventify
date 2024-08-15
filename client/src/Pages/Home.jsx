@@ -8,7 +8,6 @@ import GradualSpacing from "../components/magicui/gradual-spacing.jsx";
 
 export default function Home() {
     const user = useSelector((state) => state.user);
-    const org = useSelector((state) => state.organization);
     const [qrGenerated, setQrGenerated] = useState(false);
 
 
@@ -20,7 +19,7 @@ export default function Home() {
 
     return (
         <div className="text-center pb-12 md:pb-16 flex flex-col justify-center items-center min-h-screen">
-            {(user || org) ? (
+            {user  ? (
                 <>
 
 
