@@ -19,7 +19,6 @@ const EventSchema = new mongoose.Schema({
     poster: {
         url: {
             type: String,
-            required: true
         },
         fileName: String
     },
@@ -38,66 +37,59 @@ const EventSchema = new mongoose.Schema({
     registeredUsers: [{
         email: {
             type: String,
-            required: true,
             trim: true,
-            unique: true
+            required: true,
         },
         name: {
             type: String,
+            trim: true,
             required: true,
-            trim: true
         },
         sem: {
             type: Number,
-            required: true
+            required: true,
         },
         branch: {
             type: String,
+            trim: true,
             required: true,
-            trim: true
         }
     }],
     attendedUsers: [{
         email: {
             type: String,
-            required: true,
             trim: true,
-            unique: true
+            required: true,
         },
         name: {
             type: String,
+            trim: true,
             required: true,
-            trim: true
         },
         sem: {
             type: Number,
-            required: true
+            required: true,
         },
         branch: {
             type: String,
+            trim: true,
             required: true,
-            trim: true
         }
     }],
 
     countByBranchAndSem: [{
         branchName: {
             type: String,
-            required: true,
             trim: true
         },
         sem: {
             type: Number,
-            required: true
         },
         count: {
             type: Number,
-            required: true,
             default: 0 // Initialize count to 0
         }
     }]
 });
 
-
-EventSchema.index({ 'registeredUsers.email': 1 });
 module.exports = mongoose.model('Event', EventSchema);

@@ -1,5 +1,5 @@
 import {Avatar, Button, Dropdown, Modal, Navbar} from "flowbite-react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {getAuth, signInWithPopup, GoogleAuthProvider, signOut, getAdditionalUserInfo} from "firebase/auth";
 import app from "../firebaseconfig.jsx";
 import {useDispatch} from "react-redux";
@@ -14,8 +14,9 @@ import {UserDetailsPopup} from "./popup-modal/UserDetailsPopup.jsx";
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export default function Nav_Bar() {
 
+export default function Nav_Bar() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user)
     const [openModal, setOpenModal] = useState(false)
@@ -116,11 +117,6 @@ export default function Nav_Bar() {
         res.json().then(
             (data) => {
                 setOpenModal(false)
-                toast.success(`Welcome , ${data.name}`, {
-                    position: "top-right",
-                    draggable: true,
-                    autoClose: 3000
-                })
                 const tempuser = {
                     email: data.email,
                     name: data.name,
@@ -137,6 +133,7 @@ export default function Nav_Bar() {
 
     const handleSignOut = async () => {
         await signOut(auth).then(() => {
+            navigate('/')
             dispatch(RemoveUser(null))
         });
     }
@@ -157,25 +154,8 @@ export default function Nav_Bar() {
                         setOpenModal(true)
                     } else {
 
-                        get_user(result.user.email,result.user.photoURL).then(() => {
-                            toast.success(
-                                `Welcome Back , ${user.name}`,
-                                {
-                                    position: "top-right",
-                                    draggable: true,
-                                    autoClose: 3000
-                                }
-                            )
-                        })
+                        get_user(result.user.email,result.user.photoURL)
                     }
-                }else{
-                    toast.success(
-                        `Welcome Back , ${user.name}`,
-                        {
-                            position: "top-right",
-                            draggable: true,
-                            autoClose: 3000
-                        }                    )
                 }
                 const timeout = setTimeout(() => {
                     handleSignOut();
@@ -267,13 +247,13 @@ export default function Nav_Bar() {
                     user ? (
                         <Navbar.Collapse>
                             <Link to='/'>
-                                <span className="text-lg text-blue-600">Home</span>
+                                <span className="text-lg text-cyan-600  ">Home</span>
                             </Link>
                             <Link to='/events'>
-                                <span className="text-lg text-blue-600">Events</span>
+                                <span className="text-lg text-cyan-600">Events</span>
                             </Link>
                             <Link to='/Profile'>
-                                <span className="text-lg text-blue-600">Profile</span>
+                                <span className="text-lg text-cyan-600">Profile</span>
                             </Link>
                         </Navbar.Collapse>
                     ) : null

@@ -12,18 +12,25 @@ const createJWT = (user) => {
 
 const protect = (req, res, next) => {
     const bearer = req.headers.authorization;
-    if (!bearer) return res.status(401).send("No token provided");
+    if (!bearer) return res.status(401).send({
+        'message': 'No Token Provided',
+    });
 
     const [, token] = bearer.split(' ');
-    if (!token) return res.status(401).send("No token provided");
+    if (!token) return res.status(401).send({
+        message: 'No token provided'
+    });
 
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        next()
     }
     catch (e)
     {
         console.error("Invalid Token provided");
-        return  res.status(401).send("Invalid token is provided");
+        return  res.status(401).send({
+            "message": "Invalid Token provided"
+        });
     }
 
 }
