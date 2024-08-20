@@ -15,11 +15,6 @@ export default function Home() {
     const navigate = useNavigate()
     const [isIconCloudLoading, setIsIconCloudLoading] = useState(true)
 
-    useEffect(() => {
-        if(IconCloud) {
-            setIsIconCloudLoading(false)
-        }
-    }, [IconCloud]);
     return (
         <div className="text-center pb-12 md:pb-16 flex flex-col justify-center items-center min-h-screen">
             {user  ? (
@@ -37,9 +32,8 @@ export default function Home() {
                             Events
                         </b>
                     </Button>
-                    {
-                        isIconCloudLoading ? 'loading' : <IconCloud iconSlugs={iconSlugs}/>
-                    }
+                    <IconCloud iconSlugs={iconSlugs}/>
+
                 </>
             ) : (
                 <>
