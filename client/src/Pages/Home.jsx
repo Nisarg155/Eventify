@@ -7,13 +7,11 @@ import GradualSpacing from "../components/magicui/gradual-spacing.jsx";
 import IconCloud from "../components/magicui/icon-cloud.jsx";
 import {Button} from "flowbite-react";
 import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
 
 export default function Home() {
     const user = useSelector((state) => state.user);
     const iconSlugs = ['react', 'nodejs', 'javascript','dart','jira','github','git','typescript','gitlab','prisma','java','nodejs','flutter','vite','c','android', 'express','firebase','docker','vercel','figma','rust','react','python','go','mongodb','dotnet','nextdotjs',];
     const navigate = useNavigate()
-    const [isIconCloudLoading, setIsIconCloudLoading] = useState(true)
 
     return (
         <div className="text-center pb-12 md:pb-16 flex flex-col justify-center items-center min-h-screen">

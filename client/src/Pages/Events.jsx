@@ -28,12 +28,7 @@ const Events = () => {
     }, []);
     const user = useSelector((state) => state.user);
     const access_level = user ? user.access_level : null;
-    useEffect(() => {
 
-    }, []);
-    useEffect(() => {
-
-    }, []);
     return (
         <>
             <Tabs aria-label="Tabs with underline"  style="underline">
