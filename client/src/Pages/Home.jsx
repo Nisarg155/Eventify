@@ -23,7 +23,6 @@ export default function Home() {
                     <h3 className="text-5xl md:text-8xl font-extrabold leading-tighter tracking-tighter mb-4">
                         Explore the  events... <br/>
                     </h3>
-                    <IconCloud iconSlugs={iconSlugs}/>
 
                     <Button className={'shadow'} size={'lg'} pill gradientDuoTone="tealToLime" onClick={() => {
                         navigate('/events');
@@ -32,6 +31,7 @@ export default function Home() {
                             Events
                         </b>
                     </Button>
+                    <IconCloud iconSlugs={iconSlugs}/>
 
                 </>
             ) : (

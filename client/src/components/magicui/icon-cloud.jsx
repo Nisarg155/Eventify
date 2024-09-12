@@ -51,6 +51,7 @@ export const renderCustomIcon = (icon, theme) => {
 };
 
 export default function IconCloud({
+                                    // eslint-disable-next-line react/prop-types
   iconSlugs
 }) {
   const [data, setData] = useState(null);
