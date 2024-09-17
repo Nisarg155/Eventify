@@ -24,7 +24,7 @@ export default function Nav_Bar() {
 
     const get_user = async (email,photo) => {
         try{
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/signin/${email}`, {
+            const res = await fetch(`http://localhost:5000/api/login/signin/${email}`, {
                 method: "GET",
             })
 
@@ -66,7 +66,7 @@ export default function Nav_Bar() {
     const org_find = async (email, photo) => {
 
         try {
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/check/organization/${email}`, {
+            const res = await fetch(`http://localhost:5000/api/login/check/organization/${email}`, {
                 method: "GET",
             })
 
@@ -96,7 +96,7 @@ export default function Nav_Bar() {
 
     // function to make a request to create a new user
     const set_user = async (data) => {
-        const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/signup`, {
+        const res = await fetch(`http://localhost:5000/api/login/signup`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',

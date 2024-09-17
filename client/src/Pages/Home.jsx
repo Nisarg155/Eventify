@@ -10,7 +10,6 @@ import IconCloud from "../components/magicui/icon-cloud.jsx";
 
 export default function Home() {
     const user = useSelector((state) => state.user);
-    const iconSlugs = ['react', 'nodejs', 'javascript','dart','jira','github','git','typescript','gitlab','prisma','java','nodejs','flutter','vite','c','android', 'express','firebase','docker','vercel','figma','rust','react','python','go','mongodb','dotnet','nextdotjs',];
     const navigate = useNavigate()
 
     return (
@@ -31,8 +30,6 @@ export default function Home() {
                             Events
                         </b>
                     </Button>
-                    <IconCloud iconSlugs={iconSlugs}/>
-
                 </>
             ) : (
                 <>

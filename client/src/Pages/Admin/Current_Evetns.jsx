@@ -5,18 +5,18 @@ import {HiPlus} from "react-icons/hi";
 import {CreateEventPopUp} from "../../components/popup-modal/CreateEvent.jsx";
 import {useSelector} from "react-redux";
 import {toast} from "react-toastify";
-import {MdDelete, MdDeleteSweep} from "react-icons/md";
+import {MagnifyingGlass} from "react-loader-spinner";
 
 const Current_Evetns = (props) => {
+    // eslint-disable-next-line react/prop-types
     const events = props.newEvents;
-    console.log(events)
     const [CreateModal, setCreateModal] = useState(false)
     const user = useSelector(state => state.user)
     const access_level = user.access_level
 
-    const delete_event = async (id, index) => {
+    const delete_event = async (id) => {
         try {
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/delete/${id}`, {
+            const res = await fetch(`http://localhost:5000/api/event/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,9 +26,9 @@ const Current_Evetns = (props) => {
             })
 
             if (res.status === 200) {
-                res.json().then((data) => {
+                res.json().then(() => {
                     // eslint-disable-next-line react/prop-types
-                    const eve = events.filter( e => e._id !== id )
+                    const eve = events.filter(e => e._id !== id)
                     // eslint-disable-next-line react/prop-types
                     props.setNewEvents(eve)
                 })
@@ -42,7 +42,7 @@ const Current_Evetns = (props) => {
 
     const createEvent = async (data) => {
         try {
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/create`, {
+            const res = await fetch(`http://localhost:5000/api/event/create`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -79,80 +79,92 @@ const Current_Evetns = (props) => {
         <>
             {/* Event Create Modal */}
 
-            <Modal show={CreateModal} size="lg" onClose={() => {
-                setCreateModal(false)
-            }} popup>
-                <Modal.Header/>
-                <Modal.Body>
-                    <form onSubmit={(event) => {
-                        event.preventDefault()
-                        const formData = new FormData(event.target)
-                        const data = {
-                            name: formData.get('name'),
-                            description: formData.get('description'),
-                            location: formData.get('location'),
-                            date: formData.get('date'),
-                            time: formData.get('time'),
+                <Modal show={CreateModal} size="lg" onClose={() => {
+                    setCreateModal(false)
+                }} popup>
+                    <Modal.Header/>
+                    <Modal.Body>
+                        <form onSubmit={(event) => {
+                            event.preventDefault()
+                            const formData = new FormData(event.target)
+                            const data = {
+                                name: formData.get('name'),
+                                description: formData.get('description'),
+                                location: formData.get('location'),
+                                date: formData.get('date'),
+                                time: formData.get('time'),
+                            }
+                            createEvent(data);
+                        }}>
+                            <CreateEventPopUp/>
+                        </form>
+
+                    </Modal.Body>
+                </Modal>
+                <div className="flex flex-wrap   justify-end">
+                    <Button gradientMonochrome="info" pill className={'lg:mr-40 mr-8 shadow'} onClick={
+                        () => {
+                            setCreateModal(true)
                         }
-                        createEvent(data);
-                    }}>
-                        <CreateEventPopUp/>
-                    </form>
+                    }>
+                        <HiPlus className="mr-2 h-5 w-5"/> <b style={{fontSize: 'medium'}}>Create</b>
+                    </Button>
+                </div>
 
-                </Modal.Body>
-            </Modal>
-            <div className="flex flex-wrap   justify-end">
-                <Button gradientMonochrome="info" pill className={'lg:mr-40 mr-8 shadow'} onClick={
-                    () => {
-                        setCreateModal(true)
-                    }
-                }>
-                    <HiPlus className="mr-2 h-5 w-5"/> <b style={{fontSize: 'medium'}}>Create</b>
-                </Button>
-            </div>
-            <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
-                {
-                    events.map((event, index) => (
-                        <Card className="max-w-sm shadow-md shadow-cyan-700  w-full sm:mb-2 mb-3 "
-                              style={{borderRadius: '15px'}} key={index}>
+            {
+                // eslint-disable-next-line react/prop-types
+                !props.loader ?
+                    <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
+                        {/* eslint-disable-next-line react/prop-types */}
+                        {events.map((event, index) => (
+                            <Card className="max-w-sm shadow-md shadow-cyan-700  w-full sm:mb-2 mb-3 "
+                                  style={{borderRadius: '15px'}} key={index}>
 
-                            <h5 className="text-2xl font-bold tracking-tight text-cyan-600 dark:text-white">
-                                {
-                                    event.name
-                                }
-                            </h5>
-                            <p className="font-normal text-gray-700 dark:text-gray-400">
-                                {
-                                    event.description
-                                }
-                            </p>
-                            <div className="flex flex-wrap justify-end">
-                                <Button color={'failure'} className={'mr-2'} style={{borderRadius: '10px'}}
-                                        onClick={() => {
-                                            delete_event(event._id, index)
-                                        }}>
-                                    Delete
-                                    <MdDeleteSweep className={'ml-2 h-5 w-5 '}/>
-                                </Button>
-                                <Button style={{borderRadius: '10px'}}>
-                                    Details
-                                    <svg className="-mr-1 ml-2 h-4 w-4" fill="currentColor" viewBox="0 0 20 20"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                </Button>
-                            </div>
+                                <h5 className="text-2xl font-bold tracking-tight text-cyan-600 dark:text-white">
+                                    {
+                                        event.name
+                                    }
+                                </h5>
+                                <p className="font-normal text-gray-700 dark:text-gray-400">
+                                    {
+                                        event.description
+                                    }
+                                </p>
+                                <div className="flex flex-wrap justify-end">
+                                    <Button color={'success'} className={'mr-2'} style={{borderRadius: '10px'}}>
+                                        Edit
+                                    </Button>
+                                    <Button color={'failure'} className={'mr-2'} style={{borderRadius: '10px'}}
+                                            onClick={() => {
+                                                delete_event(event._id, index)
+                                            }}>
+                                        Delete
+                                    </Button>
+                                    <Button style={{borderRadius: '10px'}}>
+                                        Details
+                                    </Button>
+                                </div>
 
-                        </Card>
-                    ))
-                }
-            </div>
+                            </Card>
 
+                        ))
+                        }
+                    </div>
+                    :
+                    <div className={'flex flex-col -mt-40 justify-center items-center h-screen '}>
+                        <MagnifyingGlass
+                            visible={true}
+                            height="150"
+                            width="150"
+                            ariaLabel="magnifying-glass-loading"
+                            wrapperStyle={{}}
+                            wrapperClass="magnifying-glass-wrapper"
+                            glassColor="#c0efff"
+                            color="#e15b64"
+                        />
+                    </div>
 
+            }
         </>
     )
 }
