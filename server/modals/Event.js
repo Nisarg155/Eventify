@@ -75,20 +75,6 @@ const EventSchema = new mongoose.Schema({
             trim: true,
             required: true,
         }
-    }],
-
-    countByBranchAndSem: [{
-        branchName: {
-            type: String,
-            trim: true
-        },
-        sem: {
-            type: Number,
-        },
-        count: {
-            type: Number,
-            default: 0 // Initialize count to 0
-        }
     }]
 });
 

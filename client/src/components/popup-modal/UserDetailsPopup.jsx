@@ -2,6 +2,7 @@
 import {Button, Label, TextInput} from "flowbite-react";
 import {useState} from "react";
 
+// eslint-disable-next-line react/prop-types
 export function UserDetailsPopup({name}) {
     const [Name, setName] = useState(name)
     const handleChange = (event) => {

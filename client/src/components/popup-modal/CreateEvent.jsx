@@ -8,13 +8,13 @@ export function CreateEventPopUp(props) {
     // eslint-disable-next-line react/prop-types
     const [EventDate, setEventDate] = useState( props.date ||   new Date() )
     // eslint-disable-next-line react/prop-types
-    const [name, setName] = useState( props.name || null)
+    const [name, setName] = useState( props.name || '')
     // eslint-disable-next-line react/prop-types
-    const [description, setDescription] = useState(props.description ||  null)
+    const [description, setDescription] = useState(props.description ||  '')
     // eslint-disable-next-line react/prop-types
-    const [time, setTime] = useState(props.time || null)
+    const [time, setTime] = useState(props.time || '')
     // eslint-disable-next-line react/prop-types
-    const [location, setLocation] = useState(props.location || null)
+    const [location, setLocation] = useState(props.location || '')
 
 
 

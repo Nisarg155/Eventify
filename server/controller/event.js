@@ -1,29 +1,66 @@
 const Event = require('../modals/Event')
 const moment = require("moment");
 const Organization = require('../modals/Organization');
+const User = require('../modals/UserDetails');
+const {registratationTemplate} = require("../mail_service/templates/registratation");
 
 const delete_event = async (req, res) => {
-    try{
-        Event.exists({_id:req.params.id}).then((existingEvent)=>{
-            if(existingEvent){
+    try {
+        Event.exists({_id: req.params.id}).then((existingEvent) => {
+            if (existingEvent) {
                 Event.findByIdAndDelete(req.params.id).then(() => {
                     res.status(200).json({
                         success: true,
-                        message:'Successfully Deleted'
+                        message: 'Successfully Deleted'
                     })
                 })
-            }
-            else {
+            } else {
                 console.log('delete , event not found')
                 return res.status(200).json({
-                    success:false,
-                    message:'Not Found'
+                    success: false,
+                    message: 'Not Found'
                 })
             }
         })
-    }catch (e) {
+    } catch (e) {
         console.log(e.message)
         res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
+
+
+const register_event = async (req, res) => {
+    try {
+        await Event.findOneAndUpdate({_id: req.body.eventId}, {
+            $push: {
+                registeredUsers: {
+                    email: req.body.email,
+                    name: req.body.name,
+                    sem: req.body.sem,
+                    branch: req.body.branch,
+                }
+            }
+
+        }, {
+            new: true
+        })
+        await User.findOneAndUpdate({email: req.body.email}, {
+            $push: {
+                registeredEvent: req.body.eventId
+            }
+        }, {new: true}).then((user) => {
+            res.status(200).json({
+                registered: user.registeredEvent
+            })
+        })
+
+
+    } catch
+        (e) {
+        console.log(e.message, 'error in event registration')
+        return res.status(500).json({
             message: 'Internal Server Error',
         })
     }
@@ -56,7 +93,7 @@ const create = async (req, res) => {
                     time: result.time,
                 });
             }).catch((err) => {
-                console.log(err.message,'error in creating event');
+                console.log(err.message, 'error in creating event');
                 return res.status(500).json({
                     message: 'Internal Server  Error'
                 })
@@ -67,7 +104,7 @@ const create = async (req, res) => {
             });
         }
     } catch (e) {
-        console.log(e.message,'error in creating event')
+        console.log(e.message, 'error in creating event')
         return res.status(500).json({
             message: 'Internal Server Error',
         })
@@ -100,17 +137,32 @@ const get_new = async (req, res) => {
 }
 
 const get_old = async (req, res) => {
-    try{
+    try {
         await Event.find({
-            date: { $lt: new Date(req.params.date) }
-        },{
-            _id: 1,name: 1, description: 1, location: 1, time: 1, date: 1
+            date: {$lt: new Date(req.params.date)}
+        }, {
+            _id: 1, name: 1, description: 1, location: 1, time: 1, date: 1
         }).sort({date: -1}).then((result) => {
             res.status(200).json(result)
         })
-    }catch (e) {
-        console.log(e.message,'error in finding old events')
+    } catch (e) {
+        console.log(e.message, 'error in finding old events')
     }
 }
 
-module.exports = {create, get_new ,get_old,delete_event}
+const get_registered = async (req, res) => {
+    try{
+        await  User.findOne({ email: req.params.email },{
+            registeredEvent: 1,_id:0
+        }).then((result) => {
+            res.status(200).json(result)
+        })
+    }catch (e) {
+        console.log(e.message,'error while getting registered event')
+        return res.status(500).json({
+            message: 'internal server error'
+        })
+    }
+}
+
+module.exports = {create, get_new, get_old, delete_event,  register_event , get_registered}
