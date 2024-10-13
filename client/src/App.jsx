@@ -7,6 +7,7 @@ import UserContext from "./components/user_context.jsx";
 import Home from "./Pages/Home.jsx";
 import {useSelector} from "react-redux";
 import Events from "./Pages/Events.jsx";
+import EventDetails  from "./Pages/EventDetails.jsx";
 // import { Analytics } from "@vercel/analytics/react"
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path={'/events' } element={<Events />} />
+                                <Route path={'/eventDetails/:id/:date'}  element={<EventDetails/>} />
                             </Routes>
                         )
                     }
@@ -38,6 +40,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path={'/events'} element={<Events />} />
+                                <Route path={'/eventDetails/:id/:date'} element={<EventDetails/>} />
                             </Routes>
                         )
                     }

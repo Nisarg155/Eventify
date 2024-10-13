@@ -147,6 +147,64 @@ const get_old = async (req, res) => {
         })
     } catch (e) {
         console.log(e.message, 'error in finding old events')
+        return res.status(500).json({
+            message: 'internal server error'
+        })
+    }
+}
+
+const get_accepted = async  (req,res) => {
+    try{
+        await Event.findOne({_id : req.params.eventId},{
+            _id:0,registeredUsers: 1,attendedUsers:  {
+                $map : {
+                    input: '$attendedUsers',
+                    as:'user',
+                    in: {email: '$$user.email',sem:'$$user.sem',branch: '$$user.branch'},
+                }
+            }
+        }).then((users) => {
+            if(users) {
+                res.status(200).json(users)
+            }
+        })
+    }catch (e) {
+        console.log(e.message,'error while getting accepted users')
+        return res.status(500).json({
+            message: 'internal server error'
+        })
+    }
+}
+
+const accept_registered = async (req,res) => {
+    try{
+        console.log()
+        await User.findOneAndUpdate( {email:req.body.email},{
+            $push: {
+                attendedEvent : req.body.eventId
+            }
+        } )
+
+        await Event.findOneAndUpdate({ _id:req.body.eventId },{
+            $push : {
+                attendedUsers : {
+                    email : req.body.email,
+                    name : req.body.name,
+                    sem: req.body.sem,
+                    branch : req.body.branch
+                }
+            }
+        },{ new: true }).then((result) => {
+            res.status(200).json({
+                registered : result.registeredUsers,
+                accepted:result.attendedUsers
+            })
+        })
+    }catch (e) {
+        console.log(e.message,'error while accepting registration')
+        return res.status(500).json({
+            message: 'internal server error'
+        })
     }
 }
 
@@ -165,4 +223,4 @@ const get_registered = async (req, res) => {
     }
 }
 
-module.exports = {create, get_new, get_old, delete_event,  register_event , get_registered}
+module.exports = {create, get_new, get_old, delete_event,  register_event , get_registered ,get_accepted , accept_registered}

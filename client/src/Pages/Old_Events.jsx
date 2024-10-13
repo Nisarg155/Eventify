@@ -3,12 +3,14 @@
 import {Button, Card} from "flowbite-react";
 import {useSelector} from "react-redux";
 import {MagnifyingGlass} from "react-loader-spinner";
+import {useNavigate} from "react-router-dom";
 
 const Old_Events = (props) => {
     // eslint-disable-next-line react/prop-types
     const events = props.oldEvents;
     const user = useSelector(state => state.user)
     const access_level = user.access_level
+    const navigation = useNavigate();
 
 
     return (
@@ -31,8 +33,13 @@ const Old_Events = (props) => {
                                     event.description
                                 }
                             </p>
+                            {
+                                (access_level === 'Administrator' || access_level === 'Member')
+                            }
                             <div className="flex flex-wrap justify-end">
-                                <Button style={{borderRadius: '10px'}}>
+                                <Button style={{borderRadius: '10px'}} className={'shadow'} onClick={() => {
+                                    navigation(`/eventDetails/${event._id}/${event.date.slice(0, 10)}`)
+                                }}>
                                     Details
                                 </Button>
                             </div>

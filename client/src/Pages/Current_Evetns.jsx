@@ -1,11 +1,13 @@
 "use client";
 import {useEffect, useState} from "react";
-import {Button, Card, Modal, Popover, TextInput , Badge} from "flowbite-react";
+import {Button, Card, Modal, Popover, TextInput, Badge} from "flowbite-react";
 import {HiCheck, HiPlus} from "react-icons/hi";
 import {CreateEventPopUp} from "../components/popup-modal/CreateEvent.jsx";
 import {useSelector} from "react-redux";
 import {toast} from "react-toastify";
 import {MagnifyingGlass} from "react-loader-spinner";
+import QRCode from 'qrcode';
+import {useNavigate} from "react-router-dom";
 
 const Current_Evetns = (props) => {
     // eslint-disable-next-line react/prop-types
@@ -13,9 +15,12 @@ const Current_Evetns = (props) => {
     const [CreateModal, setCreateModal] = useState(false)
     const [DetailModal, setDetailModal] = useState(false)
     const [Details, setDetails] = useState(null)
+    const [QRModal, setQRModal] = useState(false)
+    const [popover, setPopover] = useState(false)
     const [RegisteredEvents, setRegisteredEvents] = useState(new Set())
     const user = useSelector(state => state.user)
     const access_level = user.access_level
+    const navigation = useNavigate();
 
 
     useEffect(() => {
@@ -28,7 +33,6 @@ const Current_Evetns = (props) => {
                 }
             }).then((res) => {
                 res.json().then((data) => {
-                    console.log(data);
                     const newSet = new Set(data.registeredEvent)
                     setRegisteredEvents(newSet)
                 })
@@ -38,7 +42,6 @@ const Current_Evetns = (props) => {
 
 
     const register = async (sem, _id) => {
-        console.log(sem, _id)
         const res = await fetch(`http://localhost:5000/api/event/register`, {
             method: "POST",
             headers: {
@@ -55,7 +58,8 @@ const Current_Evetns = (props) => {
         })
         if (res.status === 200) {
             res.json().then((data) => {
-                setRegisteredEvents(data.registered)
+                const newset = new Set(data.registeredEvent)
+                setRegisteredEvents(newset)
                 setDetailModal(false)
             })
         } else {
@@ -153,14 +157,30 @@ const Current_Evetns = (props) => {
                 </Modal.Body>
             </Modal>
 
-            {/*Event Details Modal  */}
-            <Modal dismissible size={"md"} show={DetailModal} onClose={() => setDetailModal(false)}>
+            {/* Qr Code generator Modal */}
+            <Modal show={QRModal} size="md" position={'center'} onClose={() => {
+                setQRModal(false)
+            }} popup>
+                <Modal.Header/>
+                <Modal.Body>
+                    <div className={'flex-wrap flex justify-center'}>
+                        {
+                            Details ?
+                                <img src={Details} alt={'Something Went Wrong '} width={300}/> : "Something Went Wrong "
+                        }
+                    </div>
+                </Modal.Body>
+            </Modal>
 
+            {/*Event Details Modal  */}
+            <Modal dismissible size={"md"} show={DetailModal} onClose={() => setDetailModal(false)} popup>
+                <Modal.Header>Event Details </Modal.Header>
                 <Modal.Body>
                     <div className="space-y-6">
                         <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-
+                            <b>Name</b> :- {Details && Details.name} <br/>
                             <b>Description</b> :- {Details && Details.description} <br/>
+                            <b>location</b> :- {Details && Details.location} <br/>
                             <b>Date</b>:- {Details && new Date(Details.date).toLocaleDateString()} <br/>
                             <b>Time </b>:- {Details && Details.time} <br/>
                         </p>
@@ -203,12 +223,15 @@ const Current_Evetns = (props) => {
                                             event.name
                                         }
                                     </h5>
+                                    {
+                                        access_level === 'Guest' && RegisteredEvents.has(event._id) ?
+                                            <Badge icon={HiCheck} className={'shadow-md font-medium'}
 
-                                    <Badge icon={HiCheck} className={'shadow-md font-medium'}
+                                                   color={'green'}>
+                                                <b>Registered</b>
+                                            </Badge> : null
+                                    }
 
-                                           color={'green'}>
-                                        <b>Registered</b>
-                                    </Badge>
                                 </div>
 
                                 <p className="font-normal text-gray-700 dark:text-gray-400">
@@ -219,7 +242,8 @@ const Current_Evetns = (props) => {
                                 <div className="flex flex-wrap justify-end gap-2">
                                     {
                                         access_level === "Administrator" ?
-                                            <Button color={'failure'} className={'mr-2 '} style={{borderRadius: '10px'}}
+                                            <Button color={'failure'} className={'mr-2 shadow'}
+                                                    style={{borderRadius: '10px'}}
                                                     onClick={() => {
                                                         delete_event(event._id, index)
                                                     }}>
@@ -229,6 +253,7 @@ const Current_Evetns = (props) => {
                                     {
                                         access_level === 'Guest' && !RegisteredEvents.has(event._id) ?
                                             <Popover
+                                                open={popover}
                                                 aria-labelledby="default-popover"
                                                 content={
                                                     <div className="w-64 text-sm text-gray-500 dark:text-gray-400">
@@ -258,7 +283,8 @@ const Current_Evetns = (props) => {
                                                 }
                                             >
 
-                                                <Button color={'success'} className={'shadow'} style={{borderRadius: '10px'}}>
+                                                <Button color={'success'} className={'shadow'}
+                                                        style={{borderRadius: '10px'}}>
                                                     Register
                                                 </Button>
                                             </Popover> : null
@@ -266,8 +292,18 @@ const Current_Evetns = (props) => {
                                     }
                                     {
                                         access_level === 'Guest' && RegisteredEvents.has(event._id) ?
-                                            <Button color={'success'} className={'shadow'} style={{borderRadius: '10px'}}>
-                                                Generate Qr
+                                            <Button color={'success'} className={'shadow'}
+                                                    style={{borderRadius: '10px'}} onClick={async () => {
+
+                                                const data = {
+                                                    email: user.email,
+                                                    eventId: event._id
+                                                }
+                                                const encoded_data = await QRCode.toDataURL(JSON.stringify(data))
+                                                setDetails(encoded_data)
+                                                setQRModal(true)
+                                            }}>
+                                                Generate QR
                                             </Button> : null
                                     }
                                     {
@@ -275,6 +311,14 @@ const Current_Evetns = (props) => {
                                             <Button style={{borderRadius: '10px'}} className={'shadow'} onClick={() => {
                                                 setDetailModal(true)
                                                 setDetails(event)
+                                            }}>
+                                                Details
+                                            </Button> : null
+                                    }
+                                    {
+                                        ( access_level === 'Administrator' ||  access_level === 'Member' ) ?
+                                            <Button style={{borderRadius: '10px'}} className={'shadow'} onClick={() => {
+                                                navigation(`/eventDetails/${event._id}/${event.date.slice(0,10)}`)
                                             }}>
                                                 Details
                                             </Button> : null
