@@ -2,7 +2,7 @@
 <dataSource name="@educonnect.9kpaxsh.mongodb.net">
   <database-model serializer="dbm" dbms="MONGO" family-id="MONGO" format-version="4.53">
     <root id="1">
-      <ServerVersion>7.0.12</ServerVersion>
+      <ServerVersion>7.0.14</ServerVersion>
     </root>
     <schema id="2" parent="1" name="Eventify"/>
     <schema id="3" parent="1" name="admin"/>
@@ -10,20 +10,17 @@
     <schema id="5" parent="1" name="local"/>
     <schema id="6" parent="1" name="test">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2024-08-17.11:32:20</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-10-13.22:21:19</LastIntrospectionLocalTimestamp>
     </schema>
     <table id="7" parent="6" name="events"/>
     <table id="8" parent="6" name="organizations"/>
     <table id="9" parent="6" name="userdetails"/>
-    <column id="10" parent="7" name="_id">
+    <table id="10" parent="6" name="users"/>
+    <column id="11" parent="7" name="_id">
       <Position>1</Position>
       <StoredType>ObjectId|12s</StoredType>
     </column>
-    <column id="11" parent="7" name="attendedUsers">
-      <Position>1</Position>
-      <StoredType>list|4999545s</StoredType>
-    </column>
-    <column id="12" parent="7" name="countByBranchAndSem">
+    <column id="12" parent="7" name="attendedUsers">
       <Position>1</Position>
       <StoredType>list|4999545s</StoredType>
     </column>
@@ -39,72 +36,136 @@
       <Position>1</Position>
       <StoredType>list|4999545s</StoredType>
     </column>
-    <column id="16" parent="7" name="__v">
+    <column id="16" parent="7" name="date">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="17" parent="7" name="organization">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="18" parent="7" name="__v">
       <Position>2</Position>
       <StoredType>Int32|4s</StoredType>
     </column>
-    <column id="17" parent="7" name="date">
-      <Position>2</Position>
-      <StoredType>ISODate|91s</StoredType>
-    </column>
-    <column id="18" parent="7" name="time">
+    <column id="19" parent="7" name="description">
       <Position>2</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="19" parent="7" name="description">
+    <column id="20" parent="7" name="attendedUsers._id">
+      <Position>2</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="21" parent="7" name="registeredUsers._id">
+      <Position>2</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="22" parent="7" name="attendedUsers.branch">
       <Position>3</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="20" parent="8" name="_id">
+    <column id="23" parent="7" name="registeredUsers.branch">
+      <Position>3</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="24" parent="7" name="attendedUsers.email">
+      <Position>4</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="25" parent="7" name="registeredUsers.email">
+      <Position>4</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="26" parent="7" name="attendedUsers.name">
+      <Position>5</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="27" parent="7" name="registeredUsers.name">
+      <Position>5</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="28" parent="7" name="attendedUsers.sem">
+      <Position>6</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="29" parent="7" name="registeredUsers.sem">
+      <Position>6</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="30" parent="7" name="time">
+      <Position>7</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="31" parent="8" name="_id">
       <Position>1</Position>
       <StoredType>ObjectId|12s</StoredType>
     </column>
-    <column id="21" parent="8" name="email">
+    <column id="32" parent="8" name="email">
       <Position>1</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="22" parent="8" name="members">
+    <column id="33" parent="8" name="members">
       <Position>1</Position>
       <StoredType>list|4999545s</StoredType>
     </column>
-    <column id="23" parent="8" name="__v">
+    <column id="34" parent="8" name="__v">
       <Position>1</Position>
       <StoredType>Int32|4s</StoredType>
     </column>
-    <column id="24" parent="8" name="name">
+    <column id="35" parent="8" name="name">
       <Position>1</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="25" parent="9" name="__v">
+    <column id="36" parent="9" name="__v">
       <Position>1</Position>
       <StoredType>Int32|4s</StoredType>
     </column>
-    <column id="26" parent="9" name="_id">
+    <column id="37" parent="9" name="_id">
       <Position>1</Position>
       <StoredType>ObjectId|12s</StoredType>
     </column>
-    <column id="27" parent="9" name="email">
+    <column id="38" parent="9" name="email">
       <Position>1</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="28" parent="9" name="name">
+    <column id="39" parent="9" name="name">
       <Position>1</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="29" parent="9" name="branch">
+    <column id="40" parent="9" name="branch">
       <Position>1</Position>
       <StoredType>String|12s</StoredType>
     </column>
-    <column id="30" parent="9" name="registeredEvent">
-      <Position>2</Position>
+    <column id="41" parent="9" name="registeredEvent">
+      <Position>1</Position>
       <StoredType>list|4999545s</StoredType>
     </column>
-    <column id="31" parent="9" name="attendedEvent">
-      <Position>2</Position>
+    <column id="42" parent="9" name="attendedEvent">
+      <Position>1</Position>
       <StoredType>list|4999545s</StoredType>
     </column>
-    <column id="32" parent="9" name="collageid">
+    <column id="43" parent="9" name="collageid">
       <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="44" parent="10" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="45" parent="10" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="46" parent="10" name="email">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="47" parent="10" name="password">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="48" parent="10" name="username">
+      <Position>1</Position>
       <StoredType>String|12s</StoredType>
     </column>
   </database-model>

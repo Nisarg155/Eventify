@@ -22,37 +22,35 @@ export default function Nav_Bar() {
     const [openModal, setOpenModal] = useState(false)
 
 
-    const get_user = async (email,photo) => {
-        try{
+    const get_user = async (email, photo) => {
+        try {
             const res = await fetch(`http://localhost:5000/api/login/signin/${email}`, {
                 method: "GET",
             })
 
-            if(res.status === 200){
+            if (res.status === 200) {
                 await res.json().then((data) => {
                     const tempuser = {
                         name: data.name,
                         email: data.email,
                         branch: data.branch,
                         collageid: data.collageid,
-                        photo:photo,
+                        photo: photo,
                         token: data.token,
                         access_level: data.access_level,
                     }
                     dispatch(UpdateUser(tempuser));
                 })
-            }
-            else {
-                toast.error('Unable to login',{
+            } else {
+                toast.error('Unable to login', {
                     position: "top-right",
                     draggable: true,
                     autoClose: 3000
                 })
                 handleSignOut()
             }
-        }catch ( e)
-        {
-            toast.error('Unable to login',{
+        } catch (e) {
+            toast.error('Unable to login', {
                 position: "top-right",
                 draggable: true,
                 autoClose: 3000
@@ -154,7 +152,7 @@ export default function Nav_Bar() {
                         setOpenModal(true)
                     } else {
 
-                        get_user(result.user.email,result.user.photoURL)
+                        get_user(result.user.email, result.user.photoURL)
                     }
                 }
                 const timeout = setTimeout(() => {
@@ -255,6 +253,11 @@ export default function Nav_Bar() {
                             <Link to='/Profile'>
                                 <span className="text-lg text-cyan-600">Profile</span>
                             </Link>
+                            {
+                                user.access_level === 'Administrator' ? <Link to='/user'>
+                                    <span className="text-lg text-cyan-600">Users</span>
+                                </Link> : null
+                            }
                         </Navbar.Collapse>
                     ) : null
                 }

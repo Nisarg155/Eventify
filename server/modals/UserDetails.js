@@ -25,6 +25,10 @@ const UserDetailSchema = new mongoose.Schema(
             type:mongoose.Schema.Types.ObjectId,
             ref: 'Event'
         }],
+        role:{
+            type: String,
+            default:'Guest'
+        }
     }
 )
 

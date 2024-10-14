@@ -178,7 +178,6 @@ const get_accepted = async  (req,res) => {
 
 const accept_registered = async (req,res) => {
     try{
-        console.log()
         await User.findOneAndUpdate( {email:req.body.email},{
             $push: {
                 attendedEvent : req.body.eventId

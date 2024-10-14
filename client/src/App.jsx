@@ -8,6 +8,7 @@ import Home from "./Pages/Home.jsx";
 import {useSelector} from "react-redux";
 import Events from "./Pages/Events.jsx";
 import EventDetails  from "./Pages/EventDetails.jsx";
+import Users from "./Pages/Users.jsx"
 // import { Analytics } from "@vercel/analytics/react"
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
                                 <Route path="/" element={<Home />} />
                                 <Route path={'/events' } element={<Events />} />
                                 <Route path={'/eventDetails/:id/:date'}  element={<EventDetails/>} />
+                                <Route path={'/user'}  element={<Users/>} />
                             </Routes>
                         )
                     }

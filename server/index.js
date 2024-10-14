@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const {protect} = require("./auth/auth");
 const loginRouter = require('./router/login');
 const eventRouter = require('./router/event');
+const memberRouter = require('./router/members');
 const PORT = process.env.PORT || 5000;
 const app = express();
 dotenv.config();
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 app.use("/api/login",loginRouter);
 //protected router
 app.use('/api/event',protect,eventRouter);
+app.use('/api/member',protect,memberRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

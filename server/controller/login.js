@@ -94,7 +94,7 @@ const signin = async (req, res) => {
                         branch: user.branch,
                         collageid: user.collageid,
                         token: token,
-                        access_level: "Guest"
+                        access_level: user.role  || 'Guest'
                     })
                 })
             } else {
