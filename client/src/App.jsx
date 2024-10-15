@@ -46,6 +46,16 @@ function App() {
                             </Routes>
                         )
                     }
+                    {
+                        access_level === 'Member' && (
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path={'/events' } element={<Events />} />
+                                <Route path={'/eventDetails/:id/:date'}  element={<EventDetails/>} />
+
+                            </Routes>
+                        )
+                    }
                     {/*<Analytics/>*/}
                 </UserContext.Provider>
             </BrowserRouter>

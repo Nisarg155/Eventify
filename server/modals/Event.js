@@ -34,7 +34,7 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    registeredUsers: [{
+    Users:[{
         email: {
             type: String,
             trim: true,
@@ -53,29 +53,16 @@ const EventSchema = new mongoose.Schema({
             type: String,
             trim: true,
             required: true,
+        },
+        registered:{
+            type:Boolean,
+            default:true
+        },
+        attended:{
+            type:Boolean,
+            default:false
         }
     }],
-    attendedUsers: [{
-        email: {
-            type: String,
-            trim: true,
-            required: true,
-        },
-        name: {
-            type: String,
-            trim: true,
-            required: true,
-        },
-        sem: {
-            type: Number,
-            required: true,
-        },
-        branch: {
-            type: String,
-            trim: true,
-            required: true,
-        }
-    }]
 });
 
 module.exports = mongoose.model('Event', EventSchema);

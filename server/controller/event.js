@@ -35,27 +35,28 @@ const register_event = async (req, res) => {
     try {
         await Event.findOneAndUpdate({_id: req.body.eventId}, {
             $push: {
-                registeredUsers: {
+                Users: {
                     email: req.body.email,
                     name: req.body.name,
                     sem: req.body.sem,
                     branch: req.body.branch,
+                    registered: true
                 }
             }
 
         }, {
             new: true
         })
+
         await User.findOneAndUpdate({email: req.body.email}, {
             $push: {
                 registeredEvent: req.body.eventId
             }
-        }, {new: true}).then((user) => {
-            res.status(200).json({
-                registered: user.registeredEvent
-            })
-        })
+        }, {new: true})
 
+        res.status(200).json({
+            _id:req.body.eventId
+        })
 
     } catch
         (e) {
@@ -153,54 +154,54 @@ const get_old = async (req, res) => {
     }
 }
 
-const get_accepted = async  (req,res) => {
-    try{
-        await Event.findOne({_id : req.params.eventId},{
-            _id:0,registeredUsers: 1,attendedUsers:  {
-                $map : {
+const get_accepted = async (req, res) => {
+    try {
+        await Event.findOne({_id: req.params.eventId}, {
+            _id: 0, registeredUsers: 1, attendedUsers: {
+                $map: {
                     input: '$attendedUsers',
-                    as:'user',
-                    in: {email: '$$user.email',sem:'$$user.sem',branch: '$$user.branch'},
+                    as: 'user',
+                    in: {email: '$$user.email', sem: '$$user.sem', branch: '$$user.branch'},
                 }
             }
         }).then((users) => {
-            if(users) {
+            if (users) {
                 res.status(200).json(users)
             }
         })
-    }catch (e) {
-        console.log(e.message,'error while getting accepted users')
+    } catch (e) {
+        console.log(e.message, 'error while getting accepted users')
         return res.status(500).json({
             message: 'internal server error'
         })
     }
 }
 
-const accept_registered = async (req,res) => {
-    try{
-        await User.findOneAndUpdate( {email:req.body.email},{
+const accept_registered = async (req, res) => {
+    try {
+        await User.findOneAndUpdate({email: req.body.email}, {
             $push: {
-                attendedEvent : req.body.eventId
+                attendedEvent: req.body.eventId
             }
-        } )
+        })
 
-        await Event.findOneAndUpdate({ _id:req.body.eventId },{
-            $push : {
-                attendedUsers : {
-                    email : req.body.email,
-                    name : req.body.name,
+        await Event.findOneAndUpdate({_id: req.body.eventId}, {
+            $push: {
+                attendedUsers: {
+                    email: req.body.email,
+                    name: req.body.name,
                     sem: req.body.sem,
-                    branch : req.body.branch
+                    branch: req.body.branch
                 }
             }
-        },{ new: true }).then((result) => {
+        }, {new: true}).then((result) => {
             res.status(200).json({
-                registered : result.registeredUsers,
-                accepted:result.attendedUsers
+                registered: result.registeredUsers,
+                accepted: result.attendedUsers
             })
         })
-    }catch (e) {
-        console.log(e.message,'error while accepting registration')
+    } catch (e) {
+        console.log(e.message, 'error while accepting registration')
         return res.status(500).json({
             message: 'internal server error'
         })
@@ -208,18 +209,33 @@ const accept_registered = async (req,res) => {
 }
 
 const get_registered = async (req, res) => {
-    try{
-        await  User.findOne({ email: req.params.email },{
-            registeredEvent: 1,_id:0
-        }).then((result) => {
-            res.status(200).json(result)
+    try {
+        const date = new Date(req.params.date)
+        const user = await User.findOne({email: req.params.email}, {
+            registeredEvent: 1, _id: 0
         })
-    }catch (e) {
-        console.log(e.message,'error while getting registered event')
+
+        const eventIds = await Event.find({
+            _id: {$in: user.registeredEvent},
+            date: {$gt: date} // Filter events after the specified date
+        }).select('_id'); // Select only the _id field
+
+        return res.status(200).json(eventIds);
+    } catch (e) {
+        console.log(e.message, 'error while getting registered event')
         return res.status(500).json({
             message: 'internal server error'
         })
     }
 }
 
-module.exports = {create, get_new, get_old, delete_event,  register_event , get_registered ,get_accepted , accept_registered}
+module.exports = {
+    create,
+    get_new,
+    get_old,
+    delete_event,
+    register_event,
+    get_registered,
+    get_accepted,
+    accept_registered
+}

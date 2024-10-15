@@ -1,6 +1,6 @@
 "use client";
-import {useEffect, useState} from "react";
-import {Button, Card, Modal, Popover, TextInput, Badge} from "flowbite-react";
+import {useEffect, useRef, useState} from "react";
+import {Button, Card, Modal, Popover, TextInput, Badge, Label} from "flowbite-react";
 import {HiCheck, HiPlus} from "react-icons/hi";
 import {CreateEventPopUp} from "../components/popup-modal/CreateEvent.jsx";
 import {useSelector} from "react-redux";
@@ -9,23 +9,46 @@ import {MagnifyingGlass} from "react-loader-spinner";
 import QRCode from 'qrcode';
 import {useNavigate} from "react-router-dom";
 
+
 const Current_Evetns = (props) => {
     // eslint-disable-next-line react/prop-types
-    const events = props.newEvents;
+    const [events, setEvents] = useState([])
     const [CreateModal, setCreateModal] = useState(false)
     const [DetailModal, setDetailModal] = useState(false)
     const [Details, setDetails] = useState(null)
     const [QRModal, setQRModal] = useState(false)
-    const [popover, setPopover] = useState(false)
-    const [RegisteredEvents, setRegisteredEvents] = useState(new Set())
+    const [semModal, setSemModal] = useState(false)
+    const [semEventDetails, setSemEventDetails] = useState(null)
+    const [RegisteredEvents, setRegisteredEvents] = useState(new Map())
+    const [new_event_loader, setNew_event_loader] = useState(true)
     const user = useSelector(state => state.user)
     const access_level = user.access_level
     const navigation = useNavigate();
+    const todays_date = new Date().toISOString().slice(0, 10);
+
 
 
     useEffect(() => {
+
+            const new_events = fetch(`http://localhost:5000/api/event/new/${todays_date}`, {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
+            new_events.then(res => {
+                res.json().then((data) => {
+                    setEvents(data);
+                    setNew_event_loader(false)
+                    console.log(data)
+                })
+            })
+    }, []);
+
+    useEffect(() => {
         if (access_level === 'Guest') {
-            fetch(`http://localhost:5000/api/event/registered/${user.email}`, {
+            fetch(`http://localhost:5000/api/event/registered/${user.email}/${todays_date}`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
@@ -33,13 +56,22 @@ const Current_Evetns = (props) => {
                 }
             }).then((res) => {
                 res.json().then((data) => {
-                    const newSet = new Set(data.registeredEvent)
-                    setRegisteredEvents(newSet)
+                    // data.forEach((item) => {
+                    //     setRegisteredEvents(prevState => new Map(prevState.set(item._id,1)))
+                    // })
+                    const newRegisteredEvents = new Map(); // Create a new Map instance
+                    data.forEach(item => {
+                        newRegisteredEvents.set(item._id, 1); // Add items to the new Map
+                    });
+                    setRegisteredEvents(newRegisteredEvents)
                 })
             })
         }
     }, []);
 
+    useEffect(() => {
+        console.log(RegisteredEvents)
+    }, [RegisteredEvents]);
 
     const register = async (sem, _id) => {
         const res = await fetch(`http://localhost:5000/api/event/register`, {
@@ -58,9 +90,23 @@ const Current_Evetns = (props) => {
         })
         if (res.status === 200) {
             res.json().then((data) => {
-                const newset = new Set(data.registeredEvent)
-                setRegisteredEvents(newset)
-                setDetailModal(false)
+
+                // data.forEach((item) => {
+                //     setRegisteredEvents(prevState => new Map(prevState.set(item,1)))
+                // })
+                console.log(data)
+                    setRegisteredEvents(prevState => {
+                        const newRegisteredEvents = new Map(prevState); // Create a new Map instance
+                            newRegisteredEvents.set(data._id, 1); // Update the new Map
+
+                        return newRegisteredEvents; // Return the new Map
+                    });
+                setSemModal(false)
+                setSemEventDetails(null)
+                // // eslint-disable-next-line react/prop-types
+                // props.newEventRef.current()
+
+
             })
         } else {
             console.log('error')
@@ -132,6 +178,28 @@ const Current_Evetns = (props) => {
 
     return (
         <>
+            {/*semester modal*/}
+            <Modal show={semModal} size="md" position={'center'} onClose={() => {
+                setSemModal(false)
+            }} popup>
+                <Modal.Header/>
+                <Modal.Body>
+                    <form onSubmit={(event) => {
+                        event.preventDefault()
+                        const formData = new FormData(event.target)
+                        const sem = formData.get('sem')
+                        if(sem<= 10 && sem >= 1) {
+                            register(sem,semEventDetails)
+                        }
+                    }}>
+                        <Label  htmlFor={'sem'}>Semester</Label>
+                        <input  className={'mb-2'} id={'sem'} name={'sem'} type={"number"} required={true} />
+                        <Button   color={'success'} style={{borderRadius:10}} type={"submit"}>
+                            Submit
+                        </Button>
+                    </form>
+                </Modal.Body>
+            </Modal>
             {/* Event Create Modal */}
 
             <Modal show={CreateModal} size="lg" onClose={() => {
@@ -209,7 +277,7 @@ const Current_Evetns = (props) => {
 
             {
                 // eslint-disable-next-line react/prop-types
-                !props.loader ?
+                !new_event_loader ?
                     <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
                         {/* eslint-disable-next-line react/prop-types */}
                         {events.map((event, index) => (
@@ -252,42 +320,17 @@ const Current_Evetns = (props) => {
                                     }
                                     {
                                         access_level === 'Guest' && !RegisteredEvents.has(event._id) ?
-                                            <Popover
-                                                open={popover}
-                                                aria-labelledby="default-popover"
-                                                content={
-                                                    <div className="w-64 text-sm text-gray-500 dark:text-gray-400">
-                                                        <div
-                                                            className="border-b border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-600 dark:bg-gray-700">
-                                                            <h3 id="default-popover"
-                                                                className="font-semibold text-gray-900 dark:text-white">Your
-                                                                Semester</h3>
-                                                        </div>
-                                                        <div className="px-3 py-2">
-                                                            <form onSubmit={(e) => {
-                                                                e.preventDefault()
-                                                                const formData = new FormData(e.target)
-                                                                const sem = formData.get('sem');
-                                                                register(sem, event._id)
 
-                                                            }}>
-                                                                <TextInput id="sem" name={'sem'} type="number"/>
-                                                                <Button type={'submit'} color={'success'}
-                                                                        style={{borderRadius: '10px'}}
-                                                                        className={'mt-2'}>
-                                                                    Submit
-                                                                </Button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                }
-                                            >
+                                            <Button color={'success'} className={'shadow'}
+                                                    onClick={() => {
+                                                        setSemModal(true)
+                                                        setSemEventDetails(event._id)
+                                                    }}
 
-                                                <Button color={'success'} className={'shadow'}
-                                                        style={{borderRadius: '10px'}}>
-                                                    Register
-                                                </Button>
-                                            </Popover> : null
+                                                    style={{borderRadius: '10px'}}>
+                                                Register
+                                            </Button>
+                                            : null
 
                                     }
                                     {
@@ -316,9 +359,9 @@ const Current_Evetns = (props) => {
                                             </Button> : null
                                     }
                                     {
-                                        ( access_level === 'Administrator' ||  access_level === 'Member' ) ?
+                                        (access_level === 'Administrator' || access_level === 'Member') ?
                                             <Button style={{borderRadius: '10px'}} className={'shadow'} onClick={() => {
-                                                navigation(`/eventDetails/${event._id}/${event.date.slice(0,10)}`)
+                                                navigation(`/eventDetails/${event._id}/${event.date.slice(0, 10)}`)
                                             }}>
                                                 Details
                                             </Button> : null

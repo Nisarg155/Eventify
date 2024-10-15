@@ -14,6 +14,7 @@ const Old_Events = (props) => {
 
 
     return (
+
         // eslint-disable-next-line react/prop-types
         !props.loader ?
             <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
@@ -34,15 +35,16 @@ const Old_Events = (props) => {
                                 }
                             </p>
                             {
-                                (access_level === 'Administrator' || access_level === 'Member')
+                                (access_level === 'Administrator' || access_level === 'Member') ?
+                                    <div className="flex flex-wrap justify-end">
+                                        <Button style={{borderRadius: '10px'}} className={'shadow'} onClick={() => {
+                                            navigation(`/eventDetails/${event._id}/${event.date.slice(0, 10)}`)
+                                        }}>
+                                            Details
+                                        </Button>
+                                    </div> : null
                             }
-                            <div className="flex flex-wrap justify-end">
-                                <Button style={{borderRadius: '10px'}} className={'shadow'} onClick={() => {
-                                    navigation(`/eventDetails/${event._id}/${event.date.slice(0, 10)}`)
-                                }}>
-                                    Details
-                                </Button>
-                            </div>
+
 
                         </Card>
                     ))
