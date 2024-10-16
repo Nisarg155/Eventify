@@ -11,11 +11,8 @@ const EventDetails = () => {
     const user = useSelector(state => state.user);
     const { id , date  } = useParams();
     const Isold = new Date() > new Date(date);
-    const [registered, setRegistered] = useState([])
     const [data, setData] = useState()
     const [Users, setUsers] = useState([])
-    const [accepted, setAccepted] = useState([])
-    const [listLoader, setListLoader] = useState(true)
     const [Userloader, setUserloader] = useState(true)
     useEffect(() => {
         fetch(`http://localhost:5000/api/event/users/${id}`,{
@@ -55,7 +52,7 @@ const EventDetails = () => {
                     <UserList Users={Users} loader={Userloader} setUsers={setUsers} Isold={Isold} />
                 </Tabs.Item>
                 <Tabs.Item title="Insights" icon={FaChartSimple}>
-                    <Insights registered={registered}  accepted={accepted}  />
+                    <Insights   Users={Users}  />
                 </Tabs.Item>
             </Tabs>
         </>
