@@ -71,7 +71,7 @@ const signup = async (req, res) => {
                     access_level: "Guest",
                 });
                 const html = registratationTemplate(req.body.name)
-                const subject = "Welcome to CSI DDU!"
+                const subject = "Welcome to Eventify!"
                 sendEmail(req.body.email, subject, html);
             }
         })
