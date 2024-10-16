@@ -97,9 +97,9 @@ const Current_Evetns = (props) => {
         }
     }
 
-    const delete_event = async (id) => {
+    const delete_event = async (id,name) => {
         try {
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/delete/${id}`, {
+            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/delete/${id}/${name}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
@@ -307,7 +307,7 @@ const Current_Evetns = (props) => {
                                             <Button color={'failure'} className={'mr-2 shadow'}
                                                     style={{borderRadius: '10px'}}
                                                     onClick={() => {
-                                                        delete_event(event._id, index)
+                                                        delete_event(event._id,event.name)
                                                     }}>
                                                 Delete
                                             </Button> : null

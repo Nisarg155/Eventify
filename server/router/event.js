@@ -3,7 +3,7 @@ const {fetch_users, create ,get_new,get_old,delete_event,register_event ,get_reg
 
 router.post('/create',create)
 router.patch('/edit/:id')
-router.delete('/delete/:id',delete_event)
+router.delete('/delete/:id/:name',delete_event)
 router.get('/new/:date',get_new)
 router.get('/old/:date',get_old)
 router.post('/register',register_event)

@@ -3,17 +3,31 @@ const moment = require("moment");
 const Organization = require('../modals/Organization');
 const User = require('../modals/UserDetails');
 const {registratationTemplate} = require("../mail_service/templates/registratation");
+const {sendEmail} = require('../mail_service/mailgun')
+const delete_template = require('../mail_service/templates/delete')
+
 
 const delete_event = async (req, res) => {
+    console.log(req.params.id)
     try {
-        Event.exists({_id: req.params.id}).then((existingEvent) => {
+        const eventname = req.params.name;
+       await  Event.exists({_id: req.params.id}).then(async (existingEvent) => {
             if (existingEvent) {
-                Event.findByIdAndDelete(req.params.id).then(() => {
-                    res.status(200).json({
-                        success: true,
-                        message: 'Successfully Deleted'
-                    })
+                 await Event.findByIdAndDelete(req.params.id)
+                const users = await User.find({},{
+                    email:1,name:1
                 })
+                 const subject = "Event Cancellation Notice";
+                users.forEach((user) => {
+                    const html = delete_template(user.name,eventname)
+                    sendEmail(user.email,subject,html)
+                })
+
+                return res.status(200).json({
+                    success: false,
+                    message: 'Event Deleted Successfully'
+                })
+
             } else {
                 console.log('delete , event not found')
                 return res.status(200).json({
