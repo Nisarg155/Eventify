@@ -1,7 +1,7 @@
 import {Badge, Button, Modal, ModalBody, ModalHeader, Table} from "flowbite-react";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {MagnifyingGlass} from "react-loader-spinner";
-import {HiCheck, HiPlus} from "react-icons/hi";
+import {HiCheck, HiOutlineExclamationCircle, HiPlus} from "react-icons/hi";
 import {useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {RxCross1} from "react-icons/rx";
@@ -21,6 +21,7 @@ const UserList = (props) => {
     const access_level = User.access_level
     const [scanEnabled, setScanEnabled] = useState(false)
     const [qrData, setQrData] = useState(null)
+    const [openModal, setOpenModal] = useState(false)
 
 
     const check_in = async (data) => {
@@ -38,15 +39,7 @@ const UserList = (props) => {
         })
     }
 
-    // const handleScan = (data) => {
-    //     console.log(data)
-    //     setScanEnabled(false)
-    // }
-    //
-    // const handleError = (err) => {
-    //     console.log(err)
-    //     setScanEnabled(false)
-    // }
+
 
 
     return (<>
@@ -65,12 +58,43 @@ const UserList = (props) => {
             }
             {/*QR Scanner Component*/}
             <Modal size="lg" show={scanEnabled} position={'center'} onClose={() => setScanEnabled(false)}>
-                <ModalHeader />
                 <ModalBody>
-                    <QrReader  setQrData={setQrData}  />
+                    <QrReader  setQrData={setQrData}  setScanEnabled={setScanEnabled} setOpenModal={setOpenModal} />
                 </ModalBody>
             </Modal>
-
+            {/*User Registration Confirmation */}
+            <Modal show={openModal && qrData} size="md" onClose={() => setOpenModal(false)} popup>
+                <Modal.Header />
+                <Modal.Body>
+                    <div className="text-center">
+                        <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                            Are you sure you want to Check-in this User?
+                        </h3>
+                        <div className="flex justify-center gap-4">
+                            <Button color="success" className={'shadow'} style={{ borderRadius:10 }} onClick={() => {
+                                const Json_data = JSON.parse(qrData)
+                                const data = {
+                                    email: Json_data.email,
+                                    eventId:Json_data.eventId
+                                }
+                                check_in(data)
+                                setQrData(null)
+                                setOpenModal(false)
+                            }}>
+                                {"Yes, I'm sure"}
+                            </Button>
+                            <Button color="failure" className={'shadow'} style={{borderRadius:10 }} onClick={() => {
+                                setQrData(null)
+                                setScanEnabled(false)
+                                setOpenModal(false)
+                            }}>
+                                No, cancel
+                            </Button>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
 
             {// eslint-disable-next-line react/prop-types
                 props.loader ? <div className={'flex flex-col -mt-40 justify-center items-center h-screen '}>
