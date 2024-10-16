@@ -11,7 +11,6 @@ const Events = () => {
     const [events, setEvents] = useState([])
     const [new_event_loader, setNew_event_loader] = useState(true)
     const [old_event_loader, setOld_event_loader] = useState(true)
-    const old_Event_Ref = useRef(null)
     useEffect(() => {
         const todays_date = new Date().toISOString().slice(0, 10);
         const new_events = fetch(`https://eventify-backend-beryl.vercel.app/api/event/new/${todays_date}`, {
@@ -27,7 +26,7 @@ const Events = () => {
                 setNew_event_loader(false)
             })
         })
-        old_Event_Ref.current = () => {
+
             const old_events = fetch(`https://eventify-backend-beryl.vercel.app/api/event/old/${todays_date}`, {
                 method: "GET",
                 headers: {
@@ -42,9 +41,6 @@ const Events = () => {
                     setOld_event_loader(false)
                 })
             })
-        }
-
-        old_Event_Ref.current()
     }, []);
 
 

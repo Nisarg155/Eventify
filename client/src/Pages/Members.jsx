@@ -1,23 +1,25 @@
 import {MagnifyingGlass} from "react-loader-spinner";
-import { Button, Table} from "flowbite-react";
+import {Button, Table} from "flowbite-react";
 import {useSelector} from "react-redux";
-import { FaUserSlash } from "react-icons/fa";
+import {FaUserSlash} from "react-icons/fa";
+import empty from '../assets/No-Search-Results-Found-1--Streamline-Bruxelles.png'
+
 
 const Members = (props) => {
 
     // eslint-disable-next-line react/prop-types
     const members = props.members;
     const user = useSelector((state) => state.user);
-    const remove_member = async  (email,name) => {
-        await fetch(`https://eventify-backend-beryl.vercel.app/api/member/remove/${user.email}`,{
-            method:"DELETE",
+    const remove_member = async (email, name) => {
+        await fetch(`https://eventify-backend-beryl.vercel.app/api/member/remove/${user.email}`, {
+            method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             },
             body: JSON.stringify({
-                email:email,
-                name:name
+                email: email,
+                name: name
             })
         }).then((response) => {
             response.json().then((data) => {
@@ -67,9 +69,9 @@ const Members = (props) => {
                                                 </b>
                                             </Table.Cell>
                                             <Table.Cell className={'font-medium'}>
-                                                <Button gradientMonochrome="failure"  className={'shadow'}
+                                                <Button gradientMonochrome="failure" className={'shadow'}
                                                         onClick={() => {
-                                                            remove_member(member.email,member.name)
+                                                            remove_member(member.email, member.name)
                                                         }}
                                                         style={{borderRadius: 10}}>
                                                     <FaUserSlash className={' h-4 w-4'}/>
@@ -79,6 +81,12 @@ const Members = (props) => {
                             </Table.Body>
                         </Table>
                     </div>}
+                {
+                    members.length === 0 ? <div className='d-flex justify-content-center'>
+                            <img src={empty} height={400} width={400} alt="empty"/>
+                        </div>
+                        : null
+                }
 
             </div>
         </>

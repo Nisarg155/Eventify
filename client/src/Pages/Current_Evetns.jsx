@@ -9,6 +9,8 @@ import {MagnifyingGlass} from "react-loader-spinner";
 import QRCode from 'qrcode';
 import {useNavigate} from "react-router-dom";
 import {BiCheckDouble} from "react-icons/bi";
+import empty from '../assets/No-Search-Results-Found-1--Streamline-Bruxelles.png'
+
 
 
 const Current_Evetns = (props) => {
@@ -241,7 +243,7 @@ const Current_Evetns = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     {/*<Button onClick={() => setDetailModal(false)}>Register</Button>*/}
-                    <Button color="gray" onClick={() => setDetailModal(false)}>
+                    <Button color="failure" style={{borderRadius:10}} onClick={() => setDetailModal(false)}>
                         Close
                     </Button>
                 </Modal.Footer>
@@ -382,6 +384,13 @@ const Current_Evetns = (props) => {
                         />
                     </div>
 
+            }
+            {
+                events.length === 0 ?
+                    <div className='d-flex justify-content-center'>
+                        <img src={empty} height={400} width={400} alt="empty"/>
+                    </div>
+                    : null
             }
         </>
     )

@@ -3,6 +3,8 @@ import {Badge, Button, Table} from "flowbite-react";
 import {HiCheck} from "react-icons/hi";
 import { FaUserPlus } from "react-icons/fa6";
 import {useSelector} from "react-redux";
+import empty from '../assets/No-Search-Results-Found-1--Streamline-Bruxelles.png'
+
 
 const UsersList = (props) => {
     // eslint-disable-next-line react/prop-types
@@ -85,6 +87,13 @@ const UsersList = (props) => {
                             </Table.Body>
                         </Table>
                     </div>}
+                {
+                    users.length === 0 ?
+                        <div className='d-flex justify-content-center'>
+                            <img src={empty} height={400} width={400} alt="empty"/>
+                        </div>
+                        : null
+                }
 
             </div>
         </>
