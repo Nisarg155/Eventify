@@ -206,15 +206,23 @@ const get_registered = async (req, res) => {
     try {
         const date = new Date(req.params.date)
         const user = await User.findOne({email: req.params.email}, {
-            registeredEvent: 1, _id: 0
+            registeredEvent: 1, _id: 0,attendedEvent: 1
         })
 
-        const eventIds = await Event.find({
+        const registeredIds = await Event.find({
             _id: {$in: user.registeredEvent},
             date: {$gt: date} // Filter events after the specified date
         }).select('_id'); // Select only the _id field
 
-        return res.status(200).json(eventIds);
+        const attendedIds = await Event.find({
+            _id: {$in: user.attendedEvent},
+            date: {$gt: date} // Filter events after the specified date
+        }).select('_id');
+
+        return res.status(200).json({
+            registeredIds: registeredIds,
+            attendedIds:attendedIds
+        });
     } catch (e) {
         console.log(e.message, 'error while getting registered event')
         return res.status(500).json({

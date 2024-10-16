@@ -8,6 +8,7 @@ import {toast} from "react-toastify";
 import {MagnifyingGlass} from "react-loader-spinner";
 import QRCode from 'qrcode';
 import {useNavigate} from "react-router-dom";
+import {BiCheckDouble} from "react-icons/bi";
 
 
 const Current_Evetns = (props) => {
@@ -20,18 +21,16 @@ const Current_Evetns = (props) => {
     const [semModal, setSemModal] = useState(false)
     const [semEventDetails, setSemEventDetails] = useState(null)
     const [RegisteredEvents, setRegisteredEvents] = useState(new Map())
+    const [AttendedEvents, setAttendedEvents] = useState(new Map())
     const user = useSelector(state => state.user)
     const access_level = user.access_level
     const navigation = useNavigate();
     const todays_date = new Date().toISOString().slice(0, 10);
 
 
-
-
-
     useEffect(() => {
         if (access_level === 'Guest') {
-            fetch(`https://eventify-backend-beryl.vercel.app/api/event/registered/${user.email}/${todays_date}`, {
+            fetch(`http://localhost:5000/api/event/registered/${user.email}/${todays_date}`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
@@ -43,15 +42,20 @@ const Current_Evetns = (props) => {
                     //     setRegisteredEvents(prevState => new Map(prevState.set(item._id,1)))
                     // })
                     const newRegisteredEvents = new Map(); // Create a new Map instance
-                    data.forEach(item => {
+                    const newAttendedEvents = new Map();
+                    console.log()
+                    data.registeredIds.forEach(item => {
                         newRegisteredEvents.set(item._id, 1); // Add items to the new Map
                     });
+                    data.attendedIds.forEach(item => {
+                        newAttendedEvents.set(item._id, 1)
+                    })
                     setRegisteredEvents(newRegisteredEvents)
+                    setAttendedEvents(newAttendedEvents)
                 })
             })
         }
     }, []);
-
 
 
     const register = async (sem, _id) => {
@@ -75,12 +79,12 @@ const Current_Evetns = (props) => {
                 // data.forEach((item) => {
                 //     setRegisteredEvents(prevState => new Map(prevState.set(item,1)))
                 // })
-                    setRegisteredEvents(prevState => {
-                        const newRegisteredEvents = new Map(prevState); // Create a new Map instance
-                            newRegisteredEvents.set(data._id, 1); // Update the new Map
+                setRegisteredEvents(prevState => {
+                    const newRegisteredEvents = new Map(prevState); // Create a new Map instance
+                    newRegisteredEvents.set(data._id, 1); // Update the new Map
 
-                        return newRegisteredEvents; // Return the new Map
-                    });
+                    return newRegisteredEvents; // Return the new Map
+                });
                 setSemModal(false)
                 setSemEventDetails(null)
                 // // eslint-disable-next-line react/prop-types
@@ -168,13 +172,13 @@ const Current_Evetns = (props) => {
                         event.preventDefault()
                         const formData = new FormData(event.target)
                         const sem = formData.get('sem')
-                        if(sem<= 10 && sem >= 1) {
-                            register(sem,semEventDetails)
+                        if (sem <= 10 && sem >= 1) {
+                            register(sem, semEventDetails)
                         }
                     }}>
-                        <Label  htmlFor={'sem'}>Semester</Label>
-                        <input  className={'mb-2'} id={'sem'} name={'sem'} type={"number"} required={true} />
-                        <Button   color={'success'} style={{borderRadius:10}} type={"submit"}>
+                        <Label htmlFor={'sem'}>Semester</Label>
+                        <input className={'mb-2'} id={'sem'} name={'sem'} type={"number"} required={true}/>
+                        <Button color={'success'} style={{borderRadius: 10}} type={"submit"}>
                             Submit
                         </Button>
                     </form>
@@ -271,15 +275,24 @@ const Current_Evetns = (props) => {
                                             event.name
                                         }
                                     </h5>
-                                    {
-                                        access_level === 'Guest' && RegisteredEvents.has(event._id) ?
-                                            <Badge icon={HiCheck} className={'shadow-md font-medium'}
+                                    <div className={'flex-wrap flex gap-2'}>
+                                        {
+                                            access_level === 'Guest' && RegisteredEvents.has(event._id) ?
+                                                <Badge icon={HiCheck} className={'shadow-md font-medium'}
 
-                                                   color={'green'}>
-                                                <b>Registered</b>
-                                            </Badge> : null
-                                    }
+                                                       color={'green'}>
+                                                    <b>Registered</b>
+                                                </Badge> : null
+                                        }
+                                        {
+                                            access_level === 'Guest' && AttendedEvents.has(event._id) ?
+                                                <Badge icon={BiCheckDouble} className={'shadow-md font-medium'}
 
+                                                       color={'blue'}>
+                                                    <b>Checked-in</b>
+                                                </Badge> : null
+                                        }
+                                    </div>
                                 </div>
 
                                 <p className="font-normal text-gray-700 dark:text-gray-400">
@@ -325,7 +338,7 @@ const Current_Evetns = (props) => {
                                                 const encoded_data = await QRCode.toDataURL(JSON.stringify(data))
                                                 setDetails(encoded_data)
                                                 setQRModal(true)
-                                            }}>
+                                            }} disabled={AttendedEvents.has(event._id)}>
                                                 Generate QR
                                             </Button> : null
                                     }
