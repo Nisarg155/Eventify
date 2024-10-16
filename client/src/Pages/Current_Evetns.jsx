@@ -30,7 +30,7 @@ const Current_Evetns = (props) => {
 
     useEffect(() => {
         if (access_level === 'Guest') {
-            fetch(`http://localhost:5000/api/event/registered/${user.email}/${todays_date}`, {
+            fetch(`https://eventify-backend-beryl.vercel.app/api/event/registered/${user.email}/${todays_date}`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
