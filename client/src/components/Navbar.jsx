@@ -227,9 +227,7 @@ export default function Nav_Bar() {
                                     <span className="block text-lg">{user.name}</span> <span
                                     className="block truncate text-lg font-medium">{user.email}</span>
                                 </Dropdown.Header>
-                                <Dropdown.Item as={Link} to='/dashboard'>Dashboard</Dropdown.Item>
-                                <Dropdown.Item as={Link} to='/settings'>Settings</Dropdown.Item>
-                                <Dropdown.Item as={Link} to='/earnings'>Earnings</Dropdown.Item>
+
                                 <Dropdown.Divider/>
                                 <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
                             </Dropdown>
@@ -249,9 +247,6 @@ export default function Nav_Bar() {
                             </Link>
                             <Link to='/events'>
                                 <span className="text-lg text-cyan-600">Events</span>
-                            </Link>
-                            <Link to='/Profile'>
-                                <span className="text-lg text-cyan-600">Profile</span>
                             </Link>
                             {
                                 user.access_level === 'Administrator' ? <Link to='/user'>
