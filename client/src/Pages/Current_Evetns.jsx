@@ -12,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 
 const Current_Evetns = (props) => {
     // eslint-disable-next-line react/prop-types
-    const [events, setEvents] = useState([])
+    const events = props.newEvents;
     const [CreateModal, setCreateModal] = useState(false)
     const [DetailModal, setDetailModal] = useState(false)
     const [Details, setDetails] = useState(null)
@@ -20,7 +20,6 @@ const Current_Evetns = (props) => {
     const [semModal, setSemModal] = useState(false)
     const [semEventDetails, setSemEventDetails] = useState(null)
     const [RegisteredEvents, setRegisteredEvents] = useState(new Map())
-    const [new_event_loader, setNew_event_loader] = useState(true)
     const user = useSelector(state => state.user)
     const access_level = user.access_level
     const navigation = useNavigate();
@@ -28,23 +27,7 @@ const Current_Evetns = (props) => {
 
 
 
-    useEffect(() => {
 
-            const new_events = fetch(`http://localhost:5000/api/event/new/${todays_date}`, {
-                method: "GET",
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                }
-            })
-            new_events.then(res => {
-                res.json().then((data) => {
-                    setEvents(data);
-                    setNew_event_loader(false)
-                    console.log(data)
-                })
-            })
-    }, []);
 
     useEffect(() => {
         if (access_level === 'Guest') {
@@ -277,7 +260,7 @@ const Current_Evetns = (props) => {
 
             {
                 // eslint-disable-next-line react/prop-types
-                !new_event_loader ?
+                !props.loader ?
                     <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
                         {/* eslint-disable-next-line react/prop-types */}
                         {events.map((event, index) => (
