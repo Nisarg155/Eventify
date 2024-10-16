@@ -5,16 +5,16 @@ import {HiCheck} from "react-icons/hi";
 import {useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
 import { RxCross1 } from "react-icons/rx";
+import { FaUserPlus } from "react-icons/fa6";
+
 
 
 const UserList = (props) => {
     // eslint-disable-next-line react/prop-types
-    const registered = props.registered
-    console.log(registered)
+    const Users = props.Users
     // eslint-disable-next-line react/prop-types
     const IsOld = props.Isold;
     // eslint-disable-next-line react/prop-types
-    const accepted = new Set(props.accepted);
     const User = useSelector((state) => state.user);
     const {id} = useParams();
 
@@ -27,6 +27,8 @@ const UserList = (props) => {
             }, body: JSON.stringify(data)
         }).then((response) => {
             response.json().then((data) => {
+                // eslint-disable-next-line react/prop-types
+                props.setUsers(data.Users);
             })
         })
     }
@@ -63,7 +65,7 @@ const UserList = (props) => {
                             </Table.Head>
                             <Table.Body className={'divide-y'}>
                                 {// eslint-disable-next-line react/prop-types
-                                    registered.map((user, index) => (<Table.Row key={index}>
+                                    Users.map((user, index) => (<Table.Row key={index}>
                                             <Table.Cell className={'font-medium'}>
                                                 <b>
                                                     {user.name}<br/>
@@ -75,7 +77,7 @@ const UserList = (props) => {
                                                 {user.branch}
                                             </Table.Cell>
                                             <Table.Cell className={'font-medium'}>
-                                                {accepted.has(user.email) ? <div className="flex flex-wrap ">
+                                                {user.attended ? <div className="flex flex-wrap ">
                                                     <Badge icon={HiCheck}
                                                            className={'shadow-md font-medium'}
 
@@ -89,18 +91,15 @@ const UserList = (props) => {
                                                            color={'failure' }>
                                                         <b>Not Attended </b>
                                                     </Badge>
-                                                </div> : <Button gradientMonochrome="success"
+                                                </div> : <Button gradientMonochrome="success" className={'shadow'}
                                                                  style={{borderRadius: 10}} onClick={() => {
                                                     const data = {
                                                         email: user.email,
-                                                        name: user.name,
-                                                        branch: user.branch,
-                                                        sem: user.sem,
                                                         eventId: id,
                                                     }
                                                     check_in(data)
                                                 }}>
-                                                    Check In
+                                                    <FaUserPlus className={'w-4 h-4'}/>
                                                 </Button>}
                                             </Table.Cell>
                                         </Table.Row>))}

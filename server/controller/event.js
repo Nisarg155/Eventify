@@ -185,19 +185,13 @@ const accept_registered = async (req, res) => {
             }
         })
 
-        await Event.findOneAndUpdate({_id: req.body.eventId}, {
-            $push: {
-                attendedUsers: {
-                    email: req.body.email,
-                    name: req.body.name,
-                    sem: req.body.sem,
-                    branch: req.body.branch
-                }
+        await Event.findOneAndUpdate({_id: req.body.eventId , "Users.email":req.body.email }, {
+            $set:{
+                "Users.$.attended": true,
             }
         }, {new: true}).then((result) => {
             res.status(200).json({
-                registered: result.registeredUsers,
-                accepted: result.attendedUsers
+                Users:result.Users
             })
         })
     } catch (e) {
@@ -229,6 +223,23 @@ const get_registered = async (req, res) => {
     }
 }
 
+const fetch_users = async (req, res) => {
+    try{
+        Event.findOne({_id:req.params.eventId},{
+            _id:0,Users:1
+        }).then(users => {
+            res.status(200).json(users)
+        })
+    }catch(e)
+    {
+        console.log(e.message, 'error while getting users')
+        res.status(500).json({
+            message: 'internal server error'
+        })
+    }
+
+}
+
 module.exports = {
     create,
     get_new,
@@ -237,5 +248,6 @@ module.exports = {
     register_event,
     get_registered,
     get_accepted,
-    accept_registered
+    accept_registered,
+    fetch_users
 }

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {create ,get_new,get_old,delete_event,register_event ,get_registered , get_accepted , accept_registered} = require('../controller/event');
+const {fetch_users, create ,get_new,get_old,delete_event,register_event ,get_registered , get_accepted , accept_registered} = require('../controller/event');
 
 router.post('/create',create)
 router.patch('/edit/:id')
@@ -10,6 +10,7 @@ router.post('/register',register_event)
 router.patch('/registration/accept/',accept_registered)
 router.get('/accepted/:eventId',get_accepted)
 router.get('/registered/:email/:date',get_registered)
+router.get('/users/:eventId',fetch_users)
 
 
 module.exports = router;

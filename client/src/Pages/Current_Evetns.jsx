@@ -52,9 +52,7 @@ const Current_Evetns = (props) => {
         }
     }, []);
 
-    useEffect(() => {
-        console.log(RegisteredEvents)
-    }, [RegisteredEvents]);
+
 
     const register = async (sem, _id) => {
         const res = await fetch(`http://localhost:5000/api/event/register`, {
@@ -77,7 +75,6 @@ const Current_Evetns = (props) => {
                 // data.forEach((item) => {
                 //     setRegisteredEvents(prevState => new Map(prevState.set(item,1)))
                 // })
-                console.log(data)
                     setRegisteredEvents(prevState => {
                         const newRegisteredEvents = new Map(prevState); // Create a new Map instance
                             newRegisteredEvents.set(data._id, 1); // Update the new Map

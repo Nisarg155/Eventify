@@ -7,7 +7,6 @@ import {useEffect, useRef, useState} from "react";
 import Old_Events from "./Old_Events.jsx";
 
 const Events = () => {
-    const [newEvents, setNewEvents] = useState([])
     const [oldEvents, setOldEvents] = useState([])
     const [events, setEvents] = useState([])
     const [new_event_loader, setNew_event_loader] = useState(true)
@@ -26,7 +25,6 @@ const Events = () => {
             res.json().then((data) => {
                 setEvents(data);
                 setNew_event_loader(false)
-                console.log(data)
             })
         })
         old_Event_Ref.current = () => {

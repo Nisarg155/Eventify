@@ -13,31 +13,46 @@ const EventDetails = () => {
     const Isold = new Date() > new Date(date);
     const [registered, setRegistered] = useState([])
     const [data, setData] = useState()
+    const [Users, setUsers] = useState([])
     const [accepted, setAccepted] = useState([])
     const [listLoader, setListLoader] = useState(true)
+    const [Userloader, setUserloader] = useState(true)
     useEffect(() => {
-        fetch(`http://localhost:5000/api/event/accepted/${id}`,{
+        fetch(`http://localhost:5000/api/event/users/${id}`,{
             method: "GET",
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             }
-        }).then((res) => {
-            res.json().then((data) => {
-                setRegistered(data.registeredUsers)
-
-                data.attendedUsers.filter((user) => {
-                    setAccepted(prevState => [...prevState, user.email])
-                })
-                setListLoader(false)
+        }).then(res => {
+            res.json().then(data => {
+                setUsers(data.Users)
+                setUserloader(false)
             })
         })
+        // fetch(`http://localhost:5000/api/event/accepted/${id}`,{
+        //     method: "GET",
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Authorization': `Bearer ${user.token}`
+        //     }
+        // }).then((res) => {
+        //     res.json().then((data) => {
+        //         setRegistered(data.registeredUsers)
+        //
+        //         data.attendedUsers.filter((user) => {
+        //             setAccepted(prevState => [...prevState, user.email])
+        //         })
+        //         setListLoader(false)
+        //     })
+        // })
     }, []);
+
     return (
         <>
             <Tabs aria-label="Tabs with underline" style="underline">
                 <Tabs.Item active title="User List" icon={CiBoxList}>
-                    <UserList registered={registered} accepted={accepted} loader={listLoader} Isold={Isold} />
+                    <UserList Users={Users} loader={Userloader} setUsers={setUsers} Isold={Isold} />
                 </Tabs.Item>
                 <Tabs.Item title="Insights" icon={FaChartSimple}>
                     <Insights registered={registered}  accepted={accepted}  />
