@@ -1,6 +1,6 @@
 "use client";
-import {useEffect, useRef, useState} from "react";
-import {Button, Card, Modal, Popover, TextInput, Badge, Label} from "flowbite-react";
+import {useEffect,  useState} from "react";
+import {Button, Card, Modal, Badge, Label} from "flowbite-react";
 import {HiCheck, HiPlus} from "react-icons/hi";
 import {CreateEventPopUp} from "../components/popup-modal/CreateEvent.jsx";
 import {useSelector} from "react-redux";
@@ -173,11 +173,12 @@ const Current_Evetns = (props) => {
                         const formData = new FormData(event.target)
                         const sem = formData.get('sem')
                         if (sem <= 10 && sem >= 1) {
+                            setSemModal(false)
                             register(sem, semEventDetails)
                         }
                     }}>
-                        <Label htmlFor={'sem'}>Semester</Label>
-                        <input className={'mb-2'} id={'sem'} name={'sem'} type={"number"} required={true}/>
+                        <Label htmlFor={'sem'} className={'mb-2'} style={{ fontSize:"medium" }}><b>Semester</b></Label><br/>
+                        <input className={'mb-3'} id={'sem'} name={'sem'} style={{borderRadius:10 }} type={"number"} required={true}/>
                         <Button color={'success'} style={{borderRadius: 10}} type={"submit"}>
                             Submit
                         </Button>

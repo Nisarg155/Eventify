@@ -2,7 +2,7 @@ import {useSelector} from "react-redux";
 // import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import { qrcodeGenerator } from "react-easy-qrcode-generator";
-import CSILogo from '../assets/logo.png';
+import EventifyLogo from '../assets/backgroundRemoved.png';
 import GradualSpacing from "../components/magicui/gradual-spacing.jsx";
 import {Button} from "flowbite-react";
 import {useNavigate} from "react-router-dom";
@@ -39,10 +39,10 @@ export default function Home() {
             ) : (
                 <>
                     {/* Your sign in section */}
-                    <img src={CSILogo} alt={'CSI LOGO'} className={'mb-4 -mt-40'}/>
+                    <img src={EventifyLogo} alt={'Eventify LOGO'} className={'mb-4 -mt-40'}/>
                     <GradualSpacing
                         className="text-5xl md:text-8xl font-extrabold leading-tighter tracking-tighter mb-3"
-                        text="CSI DDU,"
+                        text="Eventify,"
                         duration={1}
                     />
                     <h1 className="text-5xl md:text-8xl font-extrabold leading-tighter tracking-tighter mb-4"

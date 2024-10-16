@@ -4,7 +4,7 @@ import {getAuth, signInWithPopup, GoogleAuthProvider, signOut, getAdditionalUser
 import app from "../firebaseconfig.jsx";
 import {useDispatch} from "react-redux";
 import {AddUser, RemoveUser, UpdateUser} from "../redux/reducers/UserSlice.jsx";
-import CSILOGO from '../assets/logo.png'
+import EventifyLOGO from '../assets/backgroundRemoved.png'
 import UserLogo from '../assets/user.png'
 import {useSelector} from "react-redux";
 import {toast, ToastContainer} from "react-toastify"
@@ -209,8 +209,8 @@ export default function Nav_Bar() {
 
             <Navbar fluid rounded>
                 <Navbar.Brand as={Link} to='/'>
-                    <img src={CSILOGO} className="mr-3 h-12 xl:h-12" alt="CSI"/>
-                    <span className="self-center whitespace-nowrap text-5xl font-semibold dark:text-white">CSI</span>
+                    <img src={EventifyLOGO} className="mr-3 h-12 xl:h-12" alt="Eventify"/>
+                    <span className="self-center whitespace-nowrap text-5xl font-semibold dark:text-white">Eventify</span>
                 </Navbar.Brand>
 
                 {
