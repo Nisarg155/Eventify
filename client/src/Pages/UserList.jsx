@@ -1,4 +1,4 @@
-import {Badge, Button, Modal, ModalBody, Table} from "flowbite-react";
+import {Badge, Button, Modal, ModalBody, ModalHeader, Table} from "flowbite-react";
 import {useRef, useState} from "react";
 import {MagnifyingGlass} from "react-loader-spinner";
 import {HiCheck, HiPlus} from "react-icons/hi";
@@ -20,7 +20,7 @@ const UserList = (props) => {
     const {id} = useParams();
     const access_level = User.access_level
     const [scanEnabled, setScanEnabled] = useState(false)
-    const qrReaderRef = useRef(null);
+    const [qrData, setQrData] = useState(null)
 
 
     const check_in = async (data) => {
@@ -64,17 +64,10 @@ const UserList = (props) => {
                     </div> : null
             }
             {/*QR Scanner Component*/}
-            <Modal size="md" show={scanEnabled} position={'center'} onClose={() => setScanEnabled(false)}>
+            <Modal size="lg" show={scanEnabled} position={'center'} onClose={() => setScanEnabled(false)}>
+                <ModalHeader />
                 <ModalBody>
-                    <QrReader />
-                    <div>
-
-                        <button onClick={() => {
-                            setScanEnabled(false)
-
-                        }}>Stop Scanning
-                        </button>
-                    </div>
+                    <QrReader  setQrData={setQrData}  />
                 </ModalBody>
             </Modal>
 

@@ -1,22 +1,28 @@
-import  { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import "./QrStyle.css";
 import QrScanner from "qr-scanner";
 import QrFrame from '../assets/qr-frame.svg'
 
-const QrReader = () => {
+const QrReader = (props) => {
     const scanner = useRef(null);
     const videoEl = useRef(null);
     const qrBoxEl = useRef(null);
     const [qrOn, setQrOn] = useState(true);
-    const [scannedResult, setScannedResult] = useState("");
+    const [qrError, setQrError] = useState(null)
 
     const onScanSuccess = (result) => {
         console.log(result);
-        setScannedResult(result.data);
+        // eslint-disable-next-line react/prop-types
+        props.setQrData(result.data)
+        scanner.current?.stop();
     };
 
     const onScanFail = (err) => {
-        console.log(err);
+        if (qrError === null) {
+            console.log(err);
+            setQrError(err)
+        }
+
     };
 
     useEffect(() => {
@@ -53,13 +59,15 @@ const QrReader = () => {
         <div className="qr-reader">
             <video ref={videoEl}></video>
             <div ref={qrBoxEl} className="qr-box">
-                <img src={QrFrame} alt="Qr Frame" width={256} height={256} className="qr-frame" />
+                <img src={QrFrame} alt="Qr Frame" width={256} height={256} className="qr-frame"/>
             </div>
-            {scannedResult && (
-                <p style={{ position: "absolute", top: 0, left: 0, zIndex: 99999, color: "white" }}>
-                    Scanned Result: {scannedResult}
-                </p>
-            )}
+            <div>
+                {qrError && (
+                    <p style={{color: "red"}}>
+                        {qrError}
+                    </p>
+                )}
+            </div>
         </div>
     );
 };
