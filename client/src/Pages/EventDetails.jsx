@@ -15,7 +15,7 @@ const EventDetails = () => {
     const [Users, setUsers] = useState([])
     const [Userloader, setUserloader] = useState(true)
     useEffect(() => {
-        fetch(`http://localhost:5000/api/event/users/${id}`,{
+        fetch(`https://eventify-backend-beryl.vercel.app/api/event/users/${id}`,{
             method: "GET",
             headers: {
                 'Accept': 'application/json',
@@ -27,7 +27,7 @@ const EventDetails = () => {
                 setUserloader(false)
             })
         })
-        // fetch(`http://localhost:5000/api/event/accepted/${id}`,{
+        // fetch(`https://eventify-backend-beryl.vercel.app/api/event/accepted/${id}`,{
         //     method: "GET",
         //     headers: {
         //         'Accept': 'application/json',

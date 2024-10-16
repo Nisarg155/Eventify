@@ -31,7 +31,7 @@ const Current_Evetns = (props) => {
 
     useEffect(() => {
         if (access_level === 'Guest') {
-            fetch(`http://localhost:5000/api/event/registered/${user.email}/${todays_date}`, {
+            fetch(`https://eventify-backend-beryl.vercel.app/api/event/registered/${user.email}/${todays_date}`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
@@ -55,7 +55,7 @@ const Current_Evetns = (props) => {
 
 
     const register = async (sem, _id) => {
-        const res = await fetch(`http://localhost:5000/api/event/register`, {
+        const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/register`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const Current_Evetns = (props) => {
 
     const delete_event = async (id) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/event/delete/${id}`, {
+            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/delete/${id}`, {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ const Current_Evetns = (props) => {
 
     const createEvent = async (data) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/event/create`, {
+            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/create`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

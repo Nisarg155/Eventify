@@ -9,7 +9,7 @@ const Members = (props) => {
     const members = props.members;
     const user = useSelector((state) => state.user);
     const remove_member = async  (email,name) => {
-        await fetch(`http://localhost:5000/api/member/remove/${user.email}`,{
+        await fetch(`https://eventify-backend-beryl.vercel.app/api/member/remove/${user.email}`,{
             method:"DELETE",
             headers: {
                 'Content-Type': 'application/json',

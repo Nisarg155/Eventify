@@ -24,7 +24,7 @@ const UserList = (props) => {
 
 
     const check_in = async (data) => {
-        await fetch(`http://localhost:5000/api/event/registration/accept/`, {
+        await fetch(`https://eventify-backend-beryl.vercel.app/api/event/registration/accept/`, {
             method: "PATCH", headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${User.token}`,

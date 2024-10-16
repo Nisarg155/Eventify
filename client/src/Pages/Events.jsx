@@ -14,7 +14,7 @@ const Events = () => {
     const old_Event_Ref = useRef(null)
     useEffect(() => {
         const todays_date = new Date().toISOString().slice(0, 10);
-        const new_events = fetch(`http://localhost:5000/api/event/new/${todays_date}`, {
+        const new_events = fetch(`https://eventify-backend-beryl.vercel.app/api/event/new/${todays_date}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
@@ -28,7 +28,7 @@ const Events = () => {
             })
         })
         old_Event_Ref.current = () => {
-            const old_events = fetch(`http://localhost:5000/api/event/old/${todays_date}`, {
+            const old_events = fetch(`https://eventify-backend-beryl.vercel.app/api/event/old/${todays_date}`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',

@@ -17,7 +17,7 @@ const Users = () => {
     const user = useSelector(state => state.user);
     useEffect(() => {
         memberfetchRef.current = () => {
-            const members = fetch(`http://localhost:5000/api/member/members/${user.email}`, {
+            const members = fetch(`https://eventify-backend-beryl.vercel.app/api/member/members/${user.email}`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
@@ -34,7 +34,7 @@ const Users = () => {
         }
 
         userfetchRef.current = () => {
-            const users = fetch(`http://localhost:5000/api/member/users`, {
+            const users = fetch(`https://eventify-backend-beryl.vercel.app/api/member/users`, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',

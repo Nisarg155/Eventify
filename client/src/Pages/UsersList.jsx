@@ -10,7 +10,7 @@ const UsersList = (props) => {
     const user = useSelector((state) => state.user);
 
     const add_member =async  (email,name) => {
-        await fetch(`http://localhost:5000/api/member/add/${user.email}`,{
+        await fetch(`https://eventify-backend-beryl.vercel.app/api/member/add/${user.email}`,{
             method:"post",
             headers: {
                 'Content-Type': 'application/json',
