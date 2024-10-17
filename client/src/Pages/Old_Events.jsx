@@ -1,6 +1,6 @@
 "use client";
 
-import {Badge, Button, Card, Modal} from "flowbite-react";
+import {Badge, Button, Card, Modal, TextInput} from "flowbite-react";
 import {useSelector} from "react-redux";
 import {MagnifyingGlass} from "react-loader-spinner";
 import {useNavigate} from "react-router-dom";
@@ -20,6 +20,19 @@ const Old_Events = (props) => {
     const [RegisteredEvents, setRegisteredEvents] = useState(new Map())
     const [DetailModal, setDetailModal] = useState(false)
     const [Details, setDetails] = useState(null)
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState(events);
+
+
+    useEffect(() => {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        // eslint-disable-next-line react/prop-types
+        const filteredData = events.filter(user =>
+            user.name.toLowerCase().includes(lowercasedFilter) ||
+            user.description.toLowerCase().includes(lowercasedFilter)
+        );
+        setFilteredUsers(filteredData);
+    }, [searchTerm, events]);
 
 
     useEffect(() => {
@@ -68,16 +81,27 @@ const Old_Events = (props) => {
             </Modal.Body>
             <Modal.Footer>
                 {/*<Button onClick={() => setDetailModal(false)}>Register</Button>*/}
-                <Button color="failure" style={{borderRadius:10}} onClick={() => setDetailModal(false)}>
+                <Button color="failure" style={{borderRadius: 10}} onClick={() => setDetailModal(false)}>
                     Close
                 </Button>
             </Modal.Footer>
         </Modal>
 
+        <div className="flex flex-wrap   justify-end">
+            <TextInput
+
+                placeholder="Search by name or description"
+                value={searchTerm}
+                style={{borderRadius: 10}}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="mb-4 mr-8 w-1/2 mt-1"
+            />
+        </div>
+
 
         {!props.loader ? <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
             {// eslint-disable-next-line react/prop-types
-                events.map((event, index) => (
+                filteredUsers.map((event, index) => (
                     <Card className="max-w-sm shadow-md shadow-cyan-700  w-full sm:mb-2 mb-3 "
                           style={{borderRadius: '15px'}} key={index}>
 
@@ -143,9 +167,9 @@ const Old_Events = (props) => {
         }
 
         {
-           !props.loader &&  events.length === 0 ? <div className='d-flex justify-content-center'>
-            <img src={empty} height={400} width={400} alt="empty"/>
-        </div> : null}
+            !props.loader && filteredUsers.length === 0 ? <div className='d-flex justify-content-center'>
+                <img src={empty} height={400} width={400} alt="empty"/>
+            </div> : null}
 
 
     </>)

@@ -1,6 +1,6 @@
 "use client";
-import {useEffect,  useState} from "react";
-import {Button, Card, Modal, Badge, Label} from "flowbite-react";
+import {useEffect, useState} from "react";
+import {Button, Card, Modal, Badge, Label, TextInput} from "flowbite-react";
 import {HiCheck, HiPlus} from "react-icons/hi";
 import {CreateEventPopUp} from "../components/popup-modal/CreateEvent.jsx";
 import {useSelector} from "react-redux";
@@ -10,7 +10,6 @@ import QRCode from 'qrcode';
 import {useNavigate} from "react-router-dom";
 import {BiCheckDouble} from "react-icons/bi";
 import empty from '../assets/No-Search-Results-Found-1--Streamline-Bruxelles.png'
-
 
 
 const Current_Evetns = (props) => {
@@ -28,6 +27,19 @@ const Current_Evetns = (props) => {
     const access_level = user.access_level
     const navigation = useNavigate();
     const todays_date = new Date().toISOString().slice(0, 10);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState(events);
+
+
+    useEffect(() => {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        // eslint-disable-next-line react/prop-types
+        const filteredData = events.filter(user =>
+            user.name.toLowerCase().includes(lowercasedFilter) ||
+            user.description.toLowerCase().includes(lowercasedFilter)
+        );
+        setFilteredUsers(filteredData);
+    }, [searchTerm, events]);
 
 
     useEffect(() => {
@@ -99,7 +111,7 @@ const Current_Evetns = (props) => {
         }
     }
 
-    const delete_event = async (id,name) => {
+    const delete_event = async (id, name) => {
         try {
             const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/event/delete/${id}/${name}`, {
                 method: "DELETE",
@@ -179,8 +191,10 @@ const Current_Evetns = (props) => {
                             register(sem, semEventDetails)
                         }
                     }}>
-                        <Label htmlFor={'sem'} className={'mb-2'} style={{ fontSize:"medium" }}><b>Semester</b></Label><br/>
-                        <input className={'mb-3'} id={'sem'} name={'sem'} style={{borderRadius:10 }} type={"number"} required={true}/>
+                        <Label htmlFor={'sem'} className={'mb-2'}
+                               style={{fontSize: "medium"}}><b>Semester</b></Label><br/>
+                        <input className={'mb-3'} id={'sem'} name={'sem'} style={{borderRadius: 10}} type={"number"}
+                               required={true}/>
                         <Button color={'success'} style={{borderRadius: 10}} type={"submit"}>
                             Submit
                         </Button>
@@ -243,31 +257,45 @@ const Current_Evetns = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     {/*<Button onClick={() => setDetailModal(false)}>Register</Button>*/}
-                    <Button color="failure" style={{borderRadius:10}} onClick={() => setDetailModal(false)}>
+                    <Button color="failure" style={{borderRadius: 10}} onClick={() => setDetailModal(false)}>
                         Close
                     </Button>
                 </Modal.Footer>
             </Modal>
 
-            {
-                access_level === 'Administrator' ? <div className="flex flex-wrap   justify-end">
-                    <Button gradientMonochrome="info" pill className={'lg:mr-40 mr-8 shadow'} onClick={
-                        () => {
-                            setCreateModal(true)
-                        }
-                    }>
-                        <HiPlus className="mr-2 h-5 w-5"/> <b style={{fontSize: 'medium'}}>Create</b>
-                    </Button>
-                </div> : null
-            }
 
+            <div className="flex flex-wrap items-center justify-end">
+                {/* Search Input */}
+                <div className="flex items-center relative mb-4 mr-4 w-1/2 mt-3">
+                    <TextInput
+                        placeholder="Search by name or description"
+                        value={searchTerm}
+                        style={{borderRadius: 10}}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="h-10 w-full"
+                    />
+                </div>
+
+                {/* Button */}
+                {
+                    access_level === 'Administrator' ?
+                        <Button gradientMonochrome="info" pill className={'h-10 lg:mr-40 mb-2 mr-8 flex items-center shadow'} onClick={
+                            () => {
+                                setCreateModal(true)
+                            }
+                        }>
+                            <HiPlus className="mr-2 h-5 w-5"/>
+                            <b style={{fontSize: 'medium'}}>Create</b>
+                        </Button> : null
+                }
+            </div>
 
             {
                 // eslint-disable-next-line react/prop-types
                 !props.loader ?
                     <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
                         {/* eslint-disable-next-line react/prop-types */}
-                        {events.map((event, index) => (
+                        {filteredUsers.map((event, index) => (
                             <Card className="max-w-sm shadow-md shadow-cyan-700  w-full sm:mb-2 mb-3 "
                                   style={{borderRadius: '15px'}} key={index}>
 
@@ -309,7 +337,7 @@ const Current_Evetns = (props) => {
                                             <Button color={'failure'} className={'mr-2 shadow'}
                                                     style={{borderRadius: '10px'}}
                                                     onClick={() => {
-                                                        delete_event(event._id,event.name)
+                                                        delete_event(event._id, event.name)
                                                     }}>
                                                 Delete
                                             </Button> : null
@@ -386,7 +414,7 @@ const Current_Evetns = (props) => {
 
             }
             {
-             !props.loader &&   events.length === 0 ?
+                !props.loader && filteredUsers.length === 0 ?
                     <div className='d-flex justify-content-center'>
                         <img src={empty} height={400} width={400} alt="empty"/>
                     </div>

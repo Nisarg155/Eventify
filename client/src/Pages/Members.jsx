@@ -1,8 +1,9 @@
 import {MagnifyingGlass} from "react-loader-spinner";
-import {Button, Table} from "flowbite-react";
+import {Button, Table, TextInput} from "flowbite-react";
 import {useSelector} from "react-redux";
 import {FaUserSlash} from "react-icons/fa";
 import empty from '../assets/No-Search-Results-Found-1--Streamline-Bruxelles.png'
+import {useEffect, useState} from "react";
 
 
 const Members = (props) => {
@@ -10,6 +11,19 @@ const Members = (props) => {
     // eslint-disable-next-line react/prop-types
     const members = props.members;
     const user = useSelector((state) => state.user);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState(members);
+
+    useEffect(() => {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        // eslint-disable-next-line react/prop-types
+        const filteredData = members.filter(user =>
+            user.name.toLowerCase().includes(lowercasedFilter) ||
+            user.email.toLowerCase().includes(lowercasedFilter)
+        );
+        setFilteredUsers(filteredData);
+    }, [searchTerm, members]);
+
     const remove_member = async (email, name) => {
         await fetch(`https://eventify-backend-beryl.vercel.app/api/member/remove/${user.email}`, {
             method: "DELETE",
@@ -33,6 +47,16 @@ const Members = (props) => {
     return (
         <>
             <div className={'container overflow-y-auto'}>
+                <div className="flex flex-wrap   justify-end">
+                    <TextInput
+
+                        placeholder="Search by name or email"
+                        value={searchTerm}
+                        style={{borderRadius: 10}}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="mb-4 mr-8 w-1/2 mt-1"
+                    />
+                </div>
 
                 {// eslint-disable-next-line react/prop-types
                     props.loader ? <div className={'flex flex-col -mt-40 justify-center items-center h-screen '}>
@@ -60,7 +84,7 @@ const Members = (props) => {
                             </Table.Head>
                             <Table.Body className={'divide-y'}>
                                 {// eslint-disable-next-line react/prop-types
-                                    members.map((member) => (
+                                    filteredUsers.map((member) => (
                                         <Table.Row key={member.email}>
                                             <Table.Cell className={'font-medium'}>
                                                 <b>
@@ -82,7 +106,7 @@ const Members = (props) => {
                         </Table>
                     </div>}
                 {
-                 !props.loader &&    members.length === 0 ? <div className='d-flex justify-content-center'>
+                    !props.loader && filteredUsers.length === 0 ? <div className='d-flex justify-content-center'>
                             <img src={empty} height={400} width={400} alt="empty"/>
                         </div>
                         : null

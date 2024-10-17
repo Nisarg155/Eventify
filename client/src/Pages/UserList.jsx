@@ -21,6 +21,8 @@ const UserList = (props) => {
     const IsOld = props.Isold;
     // eslint-disable-next-line react/prop-types
     const User = useSelector((state) => state.user);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState(Users);
     const {id} = useParams();
     const access_level = User.access_level
     const [scanEnabled, setScanEnabled] = useState(false)
@@ -99,6 +101,16 @@ const UserList = (props) => {
         })
     }, []);
 
+    useEffect(() => {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        // eslint-disable-next-line react/prop-types
+        const filteredData = Users.filter(user =>
+            user.name.toLowerCase().includes(lowercasedFilter) ||
+            user.email.toLowerCase().includes(lowercasedFilter)
+        );
+        setFilteredUsers(filteredData);
+    }, [searchTerm, Users]);
+
 
 
 
@@ -152,7 +164,7 @@ const UserList = (props) => {
                                 <Label htmlFor="date" className={'font-medium'} value="Date"/>
                             </div>
                             <DatePicker selected={EventDate} id={'date'} name={'date'} dateFormat="dd/MM/yyyy"
-                                        value={EventDate.getDate()  } minDate={new Date()} onChange={(date) => {
+                                        value={EventDate.getDate()} minDate={new Date()} onChange={(date) => {
                                 setEventDate(date)
                             }} required={true}/>
                             <div className="mb-2 block">
@@ -164,7 +176,7 @@ const UserList = (props) => {
                                    }} required={true}/>
                         </div>
 
-                        <div className="w-full"  >
+                        <div className="w-full">
                             <Button type={'submit'}>Update</Button>
                         </div>
                     </div>
@@ -173,19 +185,34 @@ const UserList = (props) => {
             </Modal.Body>
         </Modal>
 
+
+        <div className="p-4">
+
+        </div>
+
         <div className={'container overflow-y-auto'}>
             {
-                access_level === 'Administrator' || access_level === 'Member' ?
-                    <div className="flex flex-wrap   justify-end">
 
-                        <Button gradientMonochrome="info" pill className={'lg:mr-40 mr-8 mb-4 shadow'} onClick={
+                access_level === 'Administrator' || access_level === 'Member' ?
+
+                    <div className="flex flex-wrap   justify-end">
+                        <TextInput
+
+                            placeholder="Search by name or email"
+                            value={searchTerm}
+                            style={{borderRadius:10}}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="mb-4 mr-8 w-1/2 mt-1"
+                        />
+
+                        <Button gradientMonochrome="info" pill className={' mr-8 mb-4 shadow'} onClick={
                             () => {
                                 setCreateModal(true)
                             }
                         }>
                             <MdModeEditOutline className="mr-2 h-5 w-5"/> <b style={{fontSize: 'medium'}}>Update</b>
                         </Button>
-                        <Button gradientMonochrome="info" pill className={'lg:mr-40 mr-8 mb-4 shadow'} onClick={
+                        <Button gradientMonochrome="info" pill className={' mr-8 mb-4 shadow'} onClick={
                             () => {
                                 setScanEnabled(true)
                             }
@@ -216,7 +243,7 @@ const UserList = (props) => {
                                 const Json_data = JSON.parse(qrData)
                                 const data = {
                                     email: Json_data.email,
-                                    eventId:Json_data.eventId
+                                    eventId: Json_data.eventId
                                 }
                                 check_in(data)
                                 setQrData(null)
@@ -224,7 +251,7 @@ const UserList = (props) => {
                             }}>
                                 {"Yes, I'm sure"}
                             </Button>
-                            <Button color="failure" className={'shadow'} style={{borderRadius:10 }} onClick={() => {
+                            <Button color="failure" className={'shadow'} style={{borderRadius: 10}} onClick={() => {
                                 setQrData(null)
                                 setScanEnabled(false)
                                 setOpenModal(false)
@@ -264,7 +291,7 @@ const UserList = (props) => {
                         </Table.Head>
                         <Table.Body className={'divide-y'}>
                             {// eslint-disable-next-line react/prop-types
-                                Users.map((user, index) => (<Table.Row key={index}>
+                                filteredUsers.map((user, index) => (<Table.Row key={index}>
                                     <Table.Cell className={'font-medium'}>
                                         <b>
                                             {user.name}<br/>
@@ -306,7 +333,7 @@ const UserList = (props) => {
                     </Table>
                 </div>}
             {
-                !props.loader &&  Users.length === 0 ?
+                !props.loader && filteredUsers.length === 0 ?
                     <div className='d-flex justify-content-center'>
                         <img src={empty} height={400} width={400} alt="empty"/>
                     </div>
