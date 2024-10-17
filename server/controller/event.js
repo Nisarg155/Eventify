@@ -5,22 +5,62 @@ const User = require('../modals/UserDetails');
 const {registratationTemplate} = require("../mail_service/templates/registratation");
 const {sendEmail} = require('../mail_service/mailgun')
 const delete_template = require('../mail_service/templates/delete')
+const update_temp = require('../mail_service/templates/update')
 
+
+const get_event = async (req, res) => {
+    await Event.findOne({_id: req.params.id}, {
+        name: 1, description: 1, location: 1, time: 1, date: 1,
+    }).then((result) => {
+        res.status(200).json(result)
+    })
+}
+
+const update_event = async (req, res) => {
+    const parseDate = moment(req.body.date, 'DD/MM/YYYY', true);
+    let date;
+    if (parseDate.isValid()) {
+
+        date = parseDate.format('YYYY-MM-DD');
+    }
+    await Event.findOneAndUpdate({_id: req.body.id}, {
+        $set: {
+            description: req.body.description,
+            location: req.body.location,
+            date: date,
+            time: req.body.time,
+            name: req.body.name,
+        }
+    }, {
+        new: true
+    }).then(async (event) => {
+        const users = await User.find({}, {
+            email: 1, name: 1
+        })
+        const subject = "Attention!!! - Event Updated";
+        users.forEach((user) => {
+            const html = update_temp(event, user.name)
+            sendEmail(user.email, subject, html)
+        })
+
+        res.status(200).json(event)
+    })
+}
 
 const delete_event = async (req, res) => {
     console.log(req.params.id)
     try {
         const eventname = req.params.name;
-       await  Event.exists({_id: req.params.id}).then(async (existingEvent) => {
+        await Event.exists({_id: req.params.id}).then(async (existingEvent) => {
             if (existingEvent) {
-                 await Event.findByIdAndDelete(req.params.id)
-                const users = await User.find({},{
-                    email:1,name:1
+                await Event.findByIdAndDelete(req.params.id)
+                const users = await User.find({}, {
+                    email: 1, name: 1
                 })
-                 const subject = "Event Cancellation Notice";
+                const subject = "Event Cancellation Notice";
                 users.forEach((user) => {
-                    const html = delete_template(user.name,eventname)
-                    sendEmail(user.email,subject,html)
+                    const html = delete_template(user.name, eventname)
+                    sendEmail(user.email, subject, html)
                 })
 
                 return res.status(200).json({
@@ -69,7 +109,7 @@ const register_event = async (req, res) => {
         }, {new: true})
 
         res.status(200).json({
-            _id:req.body.eventId
+            _id: req.body.eventId
         })
 
     } catch
@@ -199,13 +239,13 @@ const accept_registered = async (req, res) => {
             }
         })
 
-        await Event.findOneAndUpdate({_id: req.body.eventId , "Users.email":req.body.email }, {
-            $set:{
+        await Event.findOneAndUpdate({_id: req.body.eventId, "Users.email": req.body.email}, {
+            $set: {
                 "Users.$.attended": true,
             }
         }, {new: true}).then((result) => {
             res.status(200).json({
-                Users:result.Users
+                Users: result.Users
             })
         })
     } catch (e) {
@@ -220,7 +260,7 @@ const get_registered = async (req, res) => {
     try {
         const date = new Date(req.params.date)
         const user = await User.findOne({email: req.params.email}, {
-            registeredEvent: 1, _id: 0,attendedEvent: 1
+            registeredEvent: 1, _id: 0, attendedEvent: 1
         })
 
         const registeredIds = await Event.find({
@@ -235,7 +275,7 @@ const get_registered = async (req, res) => {
 
         return res.status(200).json({
             registeredIds: registeredIds,
-            attendedIds:attendedIds
+            attendedIds: attendedIds
         });
     } catch (e) {
         console.log(e.message, 'error while getting registered event')
@@ -249,7 +289,7 @@ const get_registered_old = async (req, res) => {
     try {
         const date = new Date(req.params.date)
         const user = await User.findOne({email: req.params.email}, {
-            registeredEvent: 1, _id: 0,attendedEvent: 1
+            registeredEvent: 1, _id: 0, attendedEvent: 1
         })
 
         const registeredIds = await Event.find({
@@ -264,7 +304,7 @@ const get_registered_old = async (req, res) => {
 
         return res.status(200).json({
             registeredIds: registeredIds,
-            attendedIds:attendedIds
+            attendedIds: attendedIds
         });
     } catch (e) {
         console.log(e.message, 'error while getting registered event')
@@ -275,14 +315,13 @@ const get_registered_old = async (req, res) => {
 }
 
 const fetch_users = async (req, res) => {
-    try{
-        Event.findOne({_id:req.params.eventId},{
-            _id:0,Users:1
+    try {
+        Event.findOne({_id: req.params.eventId}, {
+            _id: 0, Users: 1
         }).then(users => {
             res.status(200).json(users)
         })
-    }catch(e)
-    {
+    } catch (e) {
         console.log(e.message, 'error while getting users')
         res.status(500).json({
             message: 'internal server error'
@@ -301,5 +340,7 @@ module.exports = {
     get_accepted,
     accept_registered,
     fetch_users,
-    get_registered_old
+    get_registered_old,
+    get_event,
+    update_event
 }
