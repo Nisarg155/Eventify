@@ -88,7 +88,7 @@ const UsersList = (props) => {
                         </Table>
                     </div>}
                 {
-                    users.length === 0 ?
+                   !props.loader &&  users.length === 0 ?
                         <div className='d-flex justify-content-center'>
                             <img src={empty} height={400} width={400} alt="empty"/>
                         </div>

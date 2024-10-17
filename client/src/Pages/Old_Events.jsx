@@ -142,7 +142,8 @@ const Old_Events = (props) => {
 
         }
 
-        {events.length === 0 ? <div className='d-flex justify-content-center'>
+        {
+           !props.loader &&  events.length === 0 ? <div className='d-flex justify-content-center'>
             <img src={empty} height={400} width={400} alt="empty"/>
         </div> : null}
 

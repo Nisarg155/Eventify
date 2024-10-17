@@ -82,7 +82,7 @@ const Members = (props) => {
                         </Table>
                     </div>}
                 {
-                    members.length === 0 ? <div className='d-flex justify-content-center'>
+                 !props.loader &&    members.length === 0 ? <div className='d-flex justify-content-center'>
                             <img src={empty} height={400} width={400} alt="empty"/>
                         </div>
                         : null
