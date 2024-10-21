@@ -201,6 +201,7 @@ const Current_Evetns = (props) => {
                     </form>
                 </Modal.Body>
             </Modal>
+
             {/* Event Create Modal */}
 
             <Modal show={CreateModal} size="lg" onClose={() => {

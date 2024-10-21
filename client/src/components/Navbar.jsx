@@ -157,7 +157,7 @@ export default function Nav_Bar() {
                 }
                 const timeout = setTimeout(() => {
                     handleSignOut();
-                }, 300000);
+                }, 500000);
 
                 return () => clearTimeout(timeout);
             })
