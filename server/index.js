@@ -21,7 +21,7 @@ mongoose.connect(process.env.DATABASE_URL).then(
     .catch(err => console.log(err))
 
 
-app.use(cors('*'));
+app.use(cors('https://eventifyddu-frontend.vercel.app/'));
 // request can send json to server
 app.use(express.json());
 // logs all the request to console
