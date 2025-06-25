@@ -7,7 +7,7 @@ import {AddUser, RemoveUser, UpdateUser} from "../redux/reducers/UserSlice.jsx";
 import EventifyLOGO from '../assets/backgroundRemoved.png'
 import UserLogo from '../assets/user.png'
 import {useSelector} from "react-redux";
-import {toast, ToastContainer} from "react-toastify"
+import {toast} from "react-toastify"
 import {useState} from "react";
 import {UserDetailsPopup} from "./popup-modal/UserDetailsPopup.jsx";
 
@@ -35,7 +35,7 @@ export default function Nav_Bar() {
                     token: data.token,
                     access_level: data.access_level,
                 }));
-            } else throw new Error("Unable to login");
+            }
         } catch (e) {
             toast.error(e.message);
             handleSignOut();
@@ -228,19 +228,7 @@ export default function Nav_Bar() {
                     ) : null
                 }
             </Navbar>
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss={false}
-                draggable
-                pauseOnHover
-                theme="light"
-                transition: Bounce
-            />
+
         </div>
 
     );

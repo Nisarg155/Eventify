@@ -9,6 +9,7 @@ import {useSelector} from "react-redux";
 import Events from "./Pages/Events.jsx";
 import EventDetails  from "./Pages/EventDetails.jsx";
 import Users from "./Pages/Users.jsx"
+import {ToastContainer}  from 'react-toastify'
 // import { Analytics } from "@vercel/analytics/react"
 
 function App() {
@@ -59,7 +60,19 @@ function App() {
                     {/*<Analytics/>*/}
                 </UserContext.Provider>
             </BrowserRouter>
-
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover
+                theme="light"
+                transition: Bounce
+            />
         </>
     );
 }
