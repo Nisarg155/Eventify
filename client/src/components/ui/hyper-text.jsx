@@ -1,5 +1,5 @@
 "use client";;
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "../../lib/utils";
@@ -8,7 +8,7 @@ const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 
-export default function HyperText({
+ function HyperText({
   text,
   duration = 800,
 
@@ -60,7 +60,7 @@ export default function HyperText({
     (<div
       className="overflow-hidden py-2 flex cursor-default scale-100"
       onMouseEnter={triggerAnimation}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence >
         {displayText.map((letter, i) => (
           <motion.h1
             key={i}
@@ -73,3 +73,7 @@ export default function HyperText({
     </div>)
   );
 }
+
+
+const MemoizedHyperText = React.memo(HyperText);
+export default MemoizedHyperText;

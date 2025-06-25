@@ -21,76 +21,49 @@ export default function Nav_Bar() {
     const user = useSelector((state) => state.user)
     const [openModal, setOpenModal] = useState(false)
 
-
     const get_user = async (email, photo) => {
         try {
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/signin/${email}`, {
-                method: "GET",
-            })
-
+            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/signin/${email}`);
             if (res.status === 200) {
-                await res.json().then((data) => {
-                    const tempuser = {
-                        name: data.name,
-                        email: data.email,
-                        branch: data.branch,
-                        collageid: data.collageid,
-                        photo: photo,
-                        token: data.token,
-                        access_level: data.access_level,
-                    }
-                    dispatch(UpdateUser(tempuser));
-                })
-            } else {
-                toast.error('Unable to login', {
-                    position: "top-right",
-                    draggable: true,
-                    autoClose: 3000
-                })
-                handleSignOut()
-            }
-        } catch (e) {
-            toast.error('Unable to login', {
-                position: "top-right",
-                draggable: true,
-                autoClose: 3000
-            })
-            handleSignOut()
-        }
-
-
-    }
-
-    const org_find = async (email, photo) => {
-
-        try {
-            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/check/organization/${email}`, {
-                method: "GET",
-            })
-
-            if (res.status === 200) {
-                await res.json().then((value) => {
-                    const tempuser = {
-                        name: value.name,
-                        email: value.email,
-                        photo: photo,
-                        token: value.token,
-                        access_level: value.access_level,
-                    }
-                    dispatch(UpdateUser(tempuser))
-                })
-                return true
-            } else if (res.status === 204) {
-                return false
-            } else {
-                throw Error('Error While Login')
-            }
-
+                const data = await res.json();
+                dispatch(UpdateUser({
+                    name: data.name,
+                    email: data.email,
+                    branch: data.branch,
+                    collageid: data.collageid,
+                    photo,
+                    token: data.token,
+                    access_level: data.access_level,
+                }));
+            } else throw new Error("Unable to login");
         } catch (e) {
             toast.error(e.message);
             handleSignOut();
         }
-    }
+    };
+
+    const org_find = async (email, photo) => {
+        try {
+            const res = await fetch(`https://eventify-backend-beryl.vercel.app/api/login/check/organization/${email}`);
+            if (res.status === 200) {
+                const value = await res.json();
+                dispatch(UpdateUser({
+                    name: value.name,
+                    email: value.email,
+                    photo,
+                    token: value.token,
+                    access_level: value.access_level,
+                }));
+                return true;
+            } else if (res.status === 204) {
+                return false;
+            } else throw new Error("Organization check failed");
+        } catch (e) {
+            toast.error(e.message);
+            handleSignOut();
+            return false;
+        }
+    };
 
     // function to make a request to create a new user
     const set_user = async (data) => {
@@ -136,40 +109,38 @@ export default function Nav_Bar() {
         });
     }
     const handleGoogleSignIn = async () => {
-        await signInWithPopup(auth, provider)
-            .then(async (result) => {
-                const user = {
-                    name: result.user.displayName,
-                    photo: result.user.photoURL,
-                    email: result.user.email
-                }
-                await dispatch(AddUser(user))
-                const additionalUserInfo = getAdditionalUserInfo(result);
-                const isNewUser = additionalUserInfo.isNewUser;
-                const value = await org_find(result.user.email, result.user.photoURL)
-                if (!value) {
-                    if (isNewUser) {
-                        setOpenModal(true)
-                    } else {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const basicUser = {
+                name: result.user.displayName,
+                photo: result.user.photoURL,
+                email: result.user.email,
+            };
+            dispatch(AddUser(basicUser));
 
-                        get_user(result.user.email, result.user.photoURL)
-                    }
-                }
-                const timeout = setTimeout(() => {
-                    handleSignOut();
-                }, 500000);
+            const additionalInfo = getAdditionalUserInfo(result);
+            const isNewUser = additionalInfo?.isNewUser;
 
-                return () => clearTimeout(timeout);
-            })
-            .catch((error) => {
-                toast.error(error.code,
-                    {
-                        position: "top-right",
-                        draggable: true,
-                        autoClose: 3000
-                    });
+            // Make org and user fetch in parallel
+            const [orgRes, userRes] = await Promise.all([
+                org_find(basicUser.email, basicUser.photo),
+                isNewUser ? Promise.resolve(null) : get_user(basicUser.email, basicUser.photo),
+            ]);
+
+            if (!orgRes && isNewUser) {
+                setOpenModal(true);
+            }
+
+            // Set auto-logout timer
+            setTimeout(handleSignOut, 500000);
+        } catch (error) {
+            toast.error(error.code || "Google Sign-In Failed", {
+                position: "top-right",
+                autoClose: 3000,
             });
-    }
+        }
+    };
+
 
 
     return (

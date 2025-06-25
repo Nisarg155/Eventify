@@ -7,7 +7,7 @@ import GradualSpacing from "../components/magicui/gradual-spacing.jsx";
 import {Button} from "flowbite-react";
 import {useNavigate} from "react-router-dom";
 import welcome_image from '../assets/Welcome-2--Streamline-Bruxelles.png'
-import HyperText from "../components/ui/hyper-text.jsx";
+import MemoizedHyperText from "../components/ui/hyper-text.jsx";
 
 export default function Home() {
     const user = useSelector((state) => state.user);
@@ -21,7 +21,8 @@ export default function Home() {
                     {/* Your user welcome back section */}
                     <img alt={"Welcome Image"}  src={welcome_image} className={'w-23'} />
                     <b>
-                        <HyperText
+
+                        <MemoizedHyperText
                             duration={120}
                             className="text-5xl md:text-8xl font-extrabold leading-tighter tracking-tighter mb-4"
                             text="Explore the  events... "
