@@ -1,4 +1,5 @@
-
+> Admin Side Video :- [Youtube](https://youtu.be/7JQYEn1xF_Q)
+---
 #  Eventify: University & Club Event Management Platform
 
 ---
@@ -60,7 +61,7 @@ Create a `.env` file in both **frontend** and **backend** directories.
 ```env
 
 MAILGUN_API_KEY=your_mailgun_api_key
-JWT_SECRET=your_secret_key
+JWT_SECRET=your_secret_key  
 DATABASE_URL="mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority"
 
 ```
