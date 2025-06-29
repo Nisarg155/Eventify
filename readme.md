@@ -1,4 +1,5 @@
 > Admin Side Video :- [Youtube](https://youtu.be/7JQYEn1xF_Q)
+> <br> Guest Side video :- [Youtube](https://youtu.be/fZXbXKHmXqI)
 ---
 #  Eventify: University & Club Event Management Platform
 
