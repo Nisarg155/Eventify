@@ -103,11 +103,6 @@ npm install
 npm run dev
 ```
 
----
-
-## 📹 Demo Video
-
-🎥 [Watch the walkthrough video here](https://your-demo-link.com) <!-- Replace with your actual demo video link -->
 
 ---
 
