@@ -28,7 +28,7 @@ const Current_Evetns = (props) => {
     const navigation = useNavigate();
     const todays_date = new Date().toISOString().slice(0, 10);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filteredUsers, setFilteredUsers] = useState(events);
+    const [filteredEvents, setFilteredEvents] = useState(events);
 
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const Current_Evetns = (props) => {
             user.name.toLowerCase().includes(lowercasedFilter) ||
             user.description.toLowerCase().includes(lowercasedFilter)
         );
-        setFilteredUsers(filteredData);
+        setFilteredEvents(filteredData);
     }, [searchTerm, events]);
 
 
@@ -296,7 +296,7 @@ const Current_Evetns = (props) => {
                 !props.loader ?
                     <div className={'p-6 flex-wrap flex justify-start align-items-stretch  gap-4'}>
                         {/* eslint-disable-next-line react/prop-types */}
-                        {filteredUsers.map((event, index) => (
+                        {filteredEvents.map((event, index) => (
                             <Card className="max-w-sm shadow-md shadow-cyan-700  w-full sm:mb-2 mb-3 "
                                   style={{borderRadius: '15px'}} key={index}>
 
@@ -415,7 +415,7 @@ const Current_Evetns = (props) => {
 
             }
             {
-                !props.loader && filteredUsers.length === 0 ?
+                !props.loader && filteredEvents.length === 0 ?
                     <div className='d-flex justify-content-center'>
                         <img src={empty} height={400} width={400} alt="empty"/>
                     </div>
